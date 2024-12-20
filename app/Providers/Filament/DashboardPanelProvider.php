@@ -28,6 +28,9 @@ class DashboardPanelProvider extends PanelProvider
             ->path('dashboard')
             ->login()
             ->registration()
+            ->plugins([
+                \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
+            ])
             ->colors([
                 'primary' => Color::Amber,
             ])
