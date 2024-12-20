@@ -17,7 +17,9 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
+
+    protected static ?string $navigationGroup = 'Administrativo';
 
     public static function form(Form $form): Form
     {
@@ -30,6 +32,11 @@ class UserResource extends Resource
                     ->multiple()
                     ->preload()
                     ->searchable(),
+                Forms\Components\Select::make('sucursal_id')
+                    ->required()
+                    ->label('Sucursal')
+                    ->relationship('sucursal', 'nombre') # Asi obtenemos la rela el nombre de la empresa.
+                    ->preload(), # Agregamos eso para que cargue los datos del select.
             ]);
     }
 
@@ -39,7 +46,8 @@ class UserResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('email'),
-                Tables\Columns\TextColumn::make('roles.name')
+                Tables\Columns\TextColumn::make('roles.name'),
+                Tables\Columns\TextColumn::make('sucursal.nombre')
             ])
             ->filters([
                 //
