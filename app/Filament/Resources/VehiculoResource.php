@@ -30,7 +30,7 @@ class VehiculoResource extends Resource
             ->schema([
                 TextInput::make('placa')
                     ->required()
-                    ->unique()
+                    ->unique(ignoreRecord: true)
                     ->label('Placa'),
                 TextInput::make('marca')
                     ->required()
@@ -51,9 +51,25 @@ class VehiculoResource extends Resource
                     ->numeric(),
                 Select::make('cliente_id')
                     ->required()
-                    ->label('ID del Cliente')
+                    ->label('Cliente')
                     ->relationship('cliente', 'nombre') # Asi obtenemos la rela el nombre de la empresa.
-                    ->preload(), # Agregamos eso para que cargue los datos del select.
+                    ->preload() # Agregamos eso para que cargue los datos del select.
+                    ->searchable()
+                    ->createOptionForm([ # Agregamos esto para crear un nuevo cliente desde un modal.
+                        TextInput::make('nombre')
+                            ->label('Nombre')
+                            ->required(),
+                        TextInput::make('telefono')
+                            ->label('Teléfono')
+                            ->required(),
+                        Select::make('empresa_id')
+                            ->label('')
+                            ->relationship('empresa', 'nombre')
+                            ->preload()
+                            ->searchable()
+                            ->default(1)
+                            ->extraAttributes(['style' => 'display:none;']),
+                    ]),
             ]);
     }
 
@@ -102,7 +118,9 @@ class VehiculoResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\ReparacionesRelationManager::class,
+            # php artisan make:filament-relation-manager NombreResource NombreMetodoRelacion CampoRelacion
+            # php artisan make:filament-relation-manager VehiculoResource reparaciones descripcion
         ];
     }
 
