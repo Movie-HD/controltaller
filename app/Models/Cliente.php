@@ -13,4 +13,9 @@ class Cliente extends Model
     {
         return $this->belongsTo(Empresa::class);
     }
+    
+    public function vehiculos()
+    {
+        return $this->hasMany(Vehiculo::class);
+    }
 }

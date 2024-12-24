@@ -69,7 +69,8 @@ class ClienteResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\VehiculosRelationManager::class,
+            # php artisan make:filament-relation-manager ClienteResource vehiculos placa
         ];
     }
 
