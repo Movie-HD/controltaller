@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\TextInput; # Agregar si es un Input [Form]
 use Filament\Forms\Components\Select; # Agregar si es un Select [Form]
 use Filament\Tables\Columns\TextColumn; # Agregar si es un Column [Table]
+use Filament\Forms\Components\Grid;
 
 class VehiculoResource extends Resource
 {
@@ -22,11 +23,14 @@ class VehiculoResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-bolt';
 
-    protected static ?string $navigationGroup = 'Clientes';
-
     public static function form(Form $form): Form
     {
         return $form
+        ->schema([
+            Grid::make([
+                'default' => 2, // Por defecto, usa 1 columna para pantallas pequeñas.
+                'sm' => 3, // A partir del tamaño 'sm', usa 2 columnas.
+            ])
             ->schema([
                 TextInput::make('placa')
                     ->required()
@@ -69,8 +73,13 @@ class VehiculoResource extends Resource
                             ->searchable()
                             ->default(1)
                             ->extraAttributes(['style' => 'display:none;']),
+                    ])
+                    ->columnSpan([
+                        'default' => 2, // Por defecto, ocupa 1 columna en dispositivos pequeños.
+                        'sm' => 3, // Ocupa 2 columnas en dispositivos grandes.
                     ]),
-            ]);
+            ])
+        ]);
     }
 
     public static function table(Table $table): Table

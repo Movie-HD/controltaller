@@ -13,6 +13,7 @@ use Filament\Forms\Components\TextInput; # Agregar si es un Input [Form]
 use Filament\Forms\Components\Select; # Agregar si es un Select [Form]
 use Filament\Forms\Components\Textarea; # Agregar si es un Textarea [Form]
 use Filament\Tables\Columns\TextColumn; # Agregar si es un Column [Table]
+use Filament\Forms\Components\Grid;
 
 class ReparacionesRelationManager extends RelationManager
 {
@@ -21,11 +22,20 @@ class ReparacionesRelationManager extends RelationManager
     public function form(Form $form): Form
     {
         return $form
+        ->schema([
+            Grid::make([
+                'default' => 2, // Por defecto, usa 1 columna para pantallas pequeñas.
+                'sm' => 3, // A partir del tamaño 'sm', usa 2 columnas.
+            ])
             ->schema([
                 # Campo Descripción
                 TextArea::make('descripcion')
                     ->label('Descripcion de Reparación') 
-                    ->required(),
+                    ->required()
+                    ->columnSpan([
+                        'default' => 2, // Por defecto, ocupa 1 columna en dispositivos pequeños.
+                        'sm' => 3, // Ocupa 2 columnas en dispositivos grandes.
+                    ]),
 
                 # Campo Servicios
                 TextInput::make('servicios')
@@ -40,8 +50,13 @@ class ReparacionesRelationManager extends RelationManager
 
                 # Campo Notas
                 TextInput::make('notas')
-                ->label('Notas Adicionales')
-                ->nullable(),
+                    ->label('Notas Adicionales')
+                    ->nullable(),
+
+                # Campo Precio
+                TextInput::make('precio')
+                    ->label('Precio')
+                    ->nullable(),
                 
                 # Campo Mecánico
                 Select::make('mecanico_id')
@@ -51,7 +66,28 @@ class ReparacionesRelationManager extends RelationManager
                         // Filtra los mecánicos según la sucursal seleccionada
                         return \App\Models\Mecanico::where('sucursal_id', $get('sucursal_id'))->pluck('nombre', 'id');
                     })
-                    ->required(),
+                    ->required()
+                    ->searchable()
+                    # SubModal para crear un nuevo Mecánico
+                    ->createOptionForm([
+                        TextInput::make('nombre')
+                            ->label('Nombre')
+                            ->required(),
+                        Select::make('empresa_id')
+                            ->label('')
+                            ->relationship('empresa', 'nombre')
+                            ->preload()
+                            ->searchable()
+                            ->default(1)
+                            ->extraAttributes(['style' => 'display:none;']),
+                        Select::make('sucursal_id')
+                            ->label('')
+                            ->relationship('sucursal', 'nombre')
+                            ->preload()
+                            ->searchable()
+                            ->default(1)
+                            ->extraAttributes(['style' => 'display:none;']),
+                    ]),
 
                 # Campo Cliente
                 Select::make('cliente_id')
@@ -92,7 +128,8 @@ class ReparacionesRelationManager extends RelationManager
                         'style' => $livewire->getSucursalId() !== null ? 'display:none;' : '',
                     ]), // Oculta el campo si ya hay una sucursal asignada.
                     
-            ]);
+            ])
+        ]);
     }
 
     public function table(Table $table): Table
@@ -110,6 +147,9 @@ class ReparacionesRelationManager extends RelationManager
 
                 # Campo Notas
                 TextColumn::make('notas'),
+
+                # Campo Precio
+                TextColumn::make('precio'),
             ])
             ->filters([
                 //

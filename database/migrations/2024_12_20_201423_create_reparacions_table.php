@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('servicios');
             $table->integer('kilometraje');
             $table->text('notas')->nullable();
+            $table->text('precio')->nullable();
             $table->foreignId('cliente_id')->constrained('clientes');
             $table->foreignId('vehiculo_id')->constrained('vehiculos');
             $table->foreignId('empresa_id')->constrained('empresas');

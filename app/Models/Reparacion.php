@@ -12,6 +12,7 @@ class Reparacion extends Model
         'servicios',
         'kilometraje',
         'notas',
+        'precio',
         'cliente_id',
         'vehiculo_id',
         'empresa_id',

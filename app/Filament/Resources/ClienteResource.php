@@ -22,7 +22,7 @@ class ClienteResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clock';
 
-    protected static ?string $navigationGroup = 'Clientes';
+    protected static ?string $navigationGroup = 'Administrativo';
 
     public static function form(Form $form): Form
     {
