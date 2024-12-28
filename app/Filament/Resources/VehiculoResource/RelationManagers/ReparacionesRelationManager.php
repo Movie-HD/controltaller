@@ -14,6 +14,10 @@ use Filament\Forms\Components\Select; # Agregar si es un Select [Form]
 use Filament\Forms\Components\Textarea; # Agregar si es un Textarea [Form]
 use Filament\Tables\Columns\TextColumn; # Agregar si es un Column [Table]
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Hidden; # Agregar si es un Hidden [Form]
+use Filament\Forms\Get; # Agregar para funcion de opciones
+use Illuminate\Support\Collection; # Agregar para funcion de opciones
+use Filament\Forms\Set; # Agregar para afterStateUpdated [Form]
 
 class ReparacionesRelationManager extends RelationManager
 {
@@ -58,82 +62,93 @@ class ReparacionesRelationManager extends RelationManager
                     ->label('Precio')
                     ->nullable(),
                 
-                # Campo Mecánico
-                Select::make('mecanico_id')
-                    ->label('Mecánico')
-                    ->relationship('mecanico', 'nombre') # Nombre del metodo de la relacion + campo a mostrar
-                    ->options(function (callable $get) {
-                        // Filtra los mecánicos según la sucursal seleccionada
-                        return \App\Models\Mecanico::where('sucursal_id', $get('sucursal_id'))->pluck('nombre', 'id');
-                    })
-                    ->required()
-                    ->searchable()
-                    # SubModal para crear un nuevo Mecánico
-                    ->createOptionForm([
-                        TextInput::make('nombre')
-                            ->label('Nombre')
-                            ->required(),
-                        Select::make('empresa_id')
-                            ->label('')
-                            ->relationship('empresa', 'nombre')
-                            ->preload()
-                            ->searchable()
-                            ->default(1)
-                            ->extraAttributes(['style' => 'display:none;']),
-                        Select::make('sucursal_id')
-                            ->label('')
-                            ->relationship('sucursal', 'nombre')
-                            ->preload()
-                            ->searchable()
-                            ->default(1)
-                            ->extraAttributes(['style' => 'display:none;']),
-                    ]),
-
                 # Campo Cliente
-                Select::make('cliente_id')
-                    ->label('')
-                    ->relationship('cliente', 'nombre') # Nombre del metodo de la relacion + campo a mostrar
-                    ->required()
-                    ->default(fn (RelationManager $livewire) => $livewire->ownerRecord->cliente_id) // Usa el cliente del vehículo relacionado
-                    ->extraAttributes(['style' => 'display:none;']),
-
+                Hidden::make('cliente_id')
+                    ->default(fn (RelationManager $livewire) => $livewire->ownerRecord->cliente_id), // Usa el cliente del vehículo relacionado
+                    
                 # Campo Vehículo
-                Select::make('vehiculo_id')
-                    ->label('')
-                    ->relationship('vehiculo', 'placa') # Nombre del metodo de la relacion + campo a mostrar
-                    ->required()
-                    ->default(fn (RelationManager $livewire) => $livewire->ownerRecord->id) // Usa el ID del vehículo relacionado
-                    ->extraAttributes(['style' => 'display:none;']),
-
+                Hidden::make('vehiculo_id')
+                    ->default(fn (RelationManager $livewire) => $livewire->ownerRecord->id), // Usa el ID del vehículo relacionado
+                    
                 # Campo Empresa
-                Select::make('empresa_id')
-                    ->label('')
-                    ->relationship('empresa', 'nombre') # Nombre del metodo de la relacion + campo a mostrar
-                    ->required()
-                    ->default(fn (RelationManager $livewire) => $livewire->ownerRecord->cliente->empresa_id) // Usa la empresa del cliente relacionado
-                    ->extraAttributes(['style' => 'display:none;']),
-
+                Hidden::make('empresa_id')
+                    ->default(fn (RelationManager $livewire) => $livewire->ownerRecord->cliente->empresa_id), // Usa la empresa del cliente relacionado
+                    
                 # Campo Sucursal
                 Select::make('sucursal_id')
-                    ->label('')
-                    ->relationship('sucursal', 'nombre') # Nombre del metodo de la relacion + campo a mostrar
-                    ->default(fn (RelationManager $livewire) => $livewire->getSucursalId()) // Lógica para obtener la sucursal asignada
-                    ->required()
-                    ->reactive() // Permite actualizar dinámicamente el campo de mecánicos
-                    ->options(function (RelationManager $livewire) {
-                        // Si el usuario no tiene una sucursal asignada, permite seleccionar manualmente.
-                        return $livewire->getSucursalOptions();
+                    ->label('Sucursal')
+                    ->options(function (Get $get): Collection {
+                        $user = auth()->user();
+                        
+                        // Si el usuario tiene el rol de admin
+                        if ($user->hasRole('admin')) {
+                            // Retorna todas las sucursales
+                            return \App\Models\Sucursal::query()
+                                ->pluck('nombre', 'id');
+                        }
+                        
+                        // Para otros usuarios, retorna solo su sucursal asignada
+                        return \App\Models\Sucursal::query()
+                            ->where('id', $user->sucursal_id) // Suponiendo que el usuario tiene un campo sucursal_id
+                            ->pluck('nombre', 'id');
                     })
-                    ->extraAttributes(fn (RelationManager $livewire) => [
-                        'style' => $livewire->getSucursalId() !== null ? 'display:none;' : '',
-                    ]), // Oculta el campo si ya hay una sucursal asignada.
-                    
-            ])
-        ]);
-    }
+                    ->default(function (Get $get) {
+                        $user = auth()->user();
+                        $sucursalesCount = \App\Models\Sucursal::query()->count();
+                        $singleSucursal = \App\Models\Sucursal::query()->first();
+                
+                        // Si el usuario es admin y no tiene sucursal definida
+                        if ($user->hasRole('admin') && !$user->sucursal_id) {
+                            // Si solo existe una sucursal, usarla por defecto
+                            if ($sucursalesCount === 1) {
+                                return $singleSucursal->id;
+                            }
+                
+                            // Si hay varias sucursales, no establecer un valor por defecto
+                            return null;
+                        }
+                
+                        // Si es admin con sucursal asignada o cualquier otro usuario, seleccionar su sucursal
+                        return $user->sucursal_id;
+                    })
+                    ->required()
+                    ->live()
+                    ->searchable()
+                    ->preload()
+                    ->afterStateUpdated(fn (Set $set) => $set('mecanico_id', null)), # Con una COMA al final del set se pueden agregar mas campos para limpiar.
 
-    public function table(Table $table): Table
-    {
+                # Campo Mecánico
+                Select::make('mecanico_id')
+                        ->label('Mecánico')
+                        ->options(fn (Get $get): Collection => \App\Models\Mecanico::query()
+                            ->where('sucursal_id', $get('sucursal_id'))
+                            ->pluck('nombre', 'id'))
+                        ->required()
+                        ->live()
+                        ->searchable()
+                        ->preload()
+                        
+                        # SubModal para crear un nuevo Mecánico
+                        ->createOptionForm([
+                            TextInput::make('nombre')
+                                ->label('Nombre')
+                                ->required(),
+                            Hidden::make('empresa_id')
+                                ->default(1),
+                            Hidden::make('sucursal_id')
+                                ->default(1),
+                        ])
+                        ->columnSpan([
+                            'default' => 2, // Por defecto, ocupa 1 columna en dispositivos pequeños.
+                            'sm' => 3, // Ocupa 2 columnas en dispositivos grandes.
+                        ]),
+                    
+                    ])
+                ]);
+            }
+            
+            public function table(Table $table): Table
+            {
         return $table
             ->recordTitleAttribute('descripcion')
             ->columns([
@@ -167,31 +182,5 @@ class ReparacionesRelationManager extends RelationManager
                 ]),
             ]);
     }
-
-    public function getSucursalId(): ?int
-{
-    $user = auth()->user();
-
-    // Si el usuario tiene una sucursal asignada, usar esa.
-    if ($user->sucursal_id) {
-        return $user->sucursal_id;
-    }
-
-    // Si es administrador y no tiene sucursal, retorna null (o una lógica predeterminada).
-    return null;
-}
-
-public function getSucursalOptions(): array
-{
-    $user = auth()->user();
-
-    // Si el usuario tiene una sucursal asignada, limitar a esa.
-    if ($user->sucursal_id) {
-        return \App\Models\Sucursal::where('id', $user->sucursal_id)->pluck('nombre', 'id')->toArray();
-    }
-
-    // Si es administrador, mostrar todas las sucursales.
-    return \App\Models\Sucursal::pluck('nombre', 'id')->toArray();
-}
-
+    
 }

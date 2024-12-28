@@ -15,7 +15,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\TextInput; # Agregar si es un Input [Form]
 use Filament\Forms\Components\Select; # Agregar si es un Select [Form]
 use Filament\Tables\Columns\TextColumn; # Agregar si es un Column [Table]
-use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Hidden;
 
 class VehiculoResource extends Resource
 {
@@ -27,7 +28,8 @@ class VehiculoResource extends Resource
     {
         return $form
         ->schema([
-            Grid::make([
+            Section::make('Datos')
+            ->columns([
                 'default' => 2, // Por defecto, usa 1 columna para pantallas pequeñas.
                 'sm' => 3, // A partir del tamaño 'sm', usa 2 columnas.
             ])
@@ -66,25 +68,22 @@ class VehiculoResource extends Resource
                         TextInput::make('telefono')
                             ->label('Teléfono')
                             ->required(),
-                        Select::make('empresa_id')
-                            ->label('')
-                            ->relationship('empresa', 'nombre')
-                            ->preload()
-                            ->searchable()
-                            ->default(1)
-                            ->extraAttributes(['style' => 'display:none;']),
+                        Hidden::make('empresa_id')
+                            ->default(1),
                     ])
                     ->columnSpan([
                         'default' => 2, // Por defecto, ocupa 1 columna en dispositivos pequeños.
                         'sm' => 3, // Ocupa 2 columnas en dispositivos grandes.
                     ]),
             ])
+            ->collapsed(fn ($livewire) => $livewire->getRecord() !== null)
         ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('placa')
                     ->label('Placa')
