@@ -142,10 +142,15 @@ class ReparacionesRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
-                    ->color('success'),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make()
+                        ->modalHeading('Ver Reparación')
+                        ->color('success'),
+                    Tables\Actions\EditAction::make()
+                        ->modalHeading('Editar Reparación')
+                        ->color('primary'),
+                    Tables\Actions\DeleteAction::make(),
+                ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
