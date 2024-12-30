@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->text('nombre');
             $table->foreignId('empresa_id')->constrained('empresas');
-            $table->foreignId('sucursal_id')->constrained('sucursals');
             $table->timestamps();
         });
     }

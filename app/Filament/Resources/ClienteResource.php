@@ -33,7 +33,7 @@ class ClienteResource extends Resource
                     ->label('Nombre del Cliente'),
                 TextInput::make('telefono')
                     ->required()
-                    ->label('Teléfono'), 
+                    ->label('Teléfono'),
                 Select::make('empresa_id')
                     ->required()
                     ->relationship('empresa', 'nombre') # Asi obtenemos la rela el nombre de la empresa.
@@ -50,8 +50,6 @@ class ClienteResource extends Resource
                     ->label('Nombre'),
                 TextColumn::make('telefono')
                     ->label('Teléfono'),
-                TextColumn::make('empresa.nombre') # Para no mostrar el empresa_id, debemos poner el nombre del metodo de la relacion y luego el campo que queremos mostrar.
-                    ->label('Empresa'),
             ])
             ->filters([
                 //

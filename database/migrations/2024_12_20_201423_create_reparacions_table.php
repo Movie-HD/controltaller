@@ -17,11 +17,10 @@ return new class extends Migration
             $table->text('servicios');
             $table->integer('kilometraje');
             $table->text('notas')->nullable();
-            $table->text('precio')->nullable();
+            $table->integer('precio')->nullable();
             $table->foreignId('cliente_id')->constrained('clientes');
             $table->foreignId('vehiculo_id')->constrained('vehiculos');
             $table->foreignId('empresa_id')->constrained('empresas');
-            $table->foreignId('sucursal_id')->constrained('sucursals');
             $table->foreignId('mecanico_id')->constrained('mecanicos');
             $table->timestamps();
         });

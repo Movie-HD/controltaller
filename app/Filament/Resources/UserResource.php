@@ -32,11 +32,6 @@ class UserResource extends Resource
                     ->multiple()
                     ->preload()
                     ->searchable(),
-                Forms\Components\Select::make('sucursal_id')
-                    ->required()
-                    ->label('Sucursal')
-                    ->relationship('sucursal', 'nombre') # Asi obtenemos la rela el nombre de la empresa.
-                    ->preload(), # Agregamos eso para que cargue los datos del select.
             ]);
     }
 
@@ -47,7 +42,6 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('email'),
                 Tables\Columns\TextColumn::make('roles.name'),
-                Tables\Columns\TextColumn::make('sucursal.nombre')
             ])
             ->filters([
                 //

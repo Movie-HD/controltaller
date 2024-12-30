@@ -89,6 +89,10 @@ class VehiculoResource extends Resource
                     ->label('Placa')
                     ->sortable()
                     ->searchable(),
+                TextColumn::make('cliente.nombre')
+                    ->label('Cliente')
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('marca')
                     ->label('Marca')
                     ->sortable()
@@ -104,19 +108,17 @@ class VehiculoResource extends Resource
                 TextColumn::make('kilometraje')
                     ->label('Kilometraje')
                     ->sortable()
-                    ->formatStateUsing(fn (int $state): string => number_format($state) . ' km'),
-                TextColumn::make('cliente.nombre')
-                    ->label('Cliente')
-                    ->sortable()
-                    ->searchable(),
+                    ->suffix(' km'),
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
-                    Tables\Actions\EditAction::make(),
-                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make()
+                        ->color('primary'),
+                    Tables\Actions\ViewAction::make()
+                        ->color('success'),
                 ])
             ])
             ->bulkActions([

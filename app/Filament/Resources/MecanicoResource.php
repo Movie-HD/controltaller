@@ -36,11 +36,6 @@ class MecanicoResource extends Resource
                     ->label('Empresa')
                     ->relationship('empresa', 'nombre') # Asi obtenemos la rela el nombre de la empresa.
                     ->preload(), # Agregamos eso para que cargue los datos del select.
-                Select::make('sucursal_id')
-                    ->required()
-                    ->label('Sucursal')
-                    ->relationship('sucursal', 'nombre') # Asi obtenemos la rela el nombre de la empresa.
-                    ->preload(), # Agregamos eso para que cargue los datos del select.
             ]);
     }
 
@@ -50,10 +45,6 @@ class MecanicoResource extends Resource
             ->columns([
                 TextColumn::make('nombre')
                     ->label('Nombre'),
-                TextColumn::make('empresa.nombre')
-                    ->label('Empresa'),
-                TextColumn::make('sucursal.nombre') # Para no mostrar el empresa_id, debemos poner el nombre del metodo de la relacion y luego el campo que queremos mostrar.
-                    ->label('Sucursal'),
             ])
             ->filters([
                 //

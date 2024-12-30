@@ -16,7 +16,6 @@ class Reparacion extends Model
         'cliente_id',
         'vehiculo_id',
         'empresa_id',
-        'sucursal_id',
         'mecanico_id',
     ];
 
@@ -33,11 +32,6 @@ class Reparacion extends Model
     public function empresa()
     {
         return $this->belongsTo(Empresa::class);
-    }
-
-    public function sucursal()
-    {
-        return $this->belongsTo(Sucursal::class);
     }
 
     public function mecanico()
