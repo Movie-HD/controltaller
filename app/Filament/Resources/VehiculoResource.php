@@ -114,7 +114,10 @@ class VehiculoResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\ViewAction::make(),
+                ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -138,6 +141,7 @@ class VehiculoResource extends Resource
             'index' => Pages\ListVehiculos::route('/'),
             'create' => Pages\CreateVehiculo::route('/create'),
             'edit' => Pages\EditVehiculo::route('/{record}/edit'),
+            'view' => Pages\ViewVehiculo::route('/{record}'),
         ];
     }
 }
