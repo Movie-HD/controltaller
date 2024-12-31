@@ -29,7 +29,7 @@ class ReparacionesRelationManager extends RelationManager
         ->schema([
             Grid::make([
                 'default' => 2, // Por defecto, usa 1 columna para pantallas pequeñas.
-                'sm' => 3, // A partir del tamaño 'sm', usa 2 columnas.
+                'sm' => 2, // A partir del tamaño 'sm', usa 2 columnas.
             ])
             ->schema([
                 # Campo Descripción
@@ -107,7 +107,7 @@ class ReparacionesRelationManager extends RelationManager
                         ])
                         ->columnSpan([
                             'default' => 2, // Por defecto, ocupa 1 columna en dispositivos pequeños.
-                            'sm' => 3, // Ocupa 2 columnas en dispositivos grandes.
+                            'sm' => 2, // Ocupa 2 columnas en dispositivos grandes.
                         ]),
 
                     ])
@@ -139,15 +139,18 @@ class ReparacionesRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                ->slideOver(),
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\ViewAction::make()
                         ->modalHeading('Ver Reparación')
+                        ->slideOver()
                         ->color('success'),
                     Tables\Actions\EditAction::make()
                         ->modalHeading('Editar Reparación')
+                        ->slideOver()
                         ->color('primary'),
                     Tables\Actions\DeleteAction::make(),
                 ])
