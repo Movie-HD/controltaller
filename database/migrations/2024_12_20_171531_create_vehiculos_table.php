@@ -18,7 +18,8 @@ return new class extends Migration
             $table->string('modelo');
             $table->integer('anio');
             $table->string('color');
-            $table->integer('kilometraje');
+            $table->integer('km_registro');
+            $table->integer('kilometraje')->nullable();
             $table->foreignId('cliente_id')->constrained('clientes');
             $table->timestamps();
         });

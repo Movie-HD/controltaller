@@ -39,6 +39,31 @@ class Reparacion extends Model
     {
         return $this->belongsTo(Mecanico::class);
     }
+
+    protected static function boot()
+{
+    parent::boot();
+
+    // Cuando se crea una nueva reparación
+    static::created(function (Reparacion $reparacion) {
+        $vehiculo = $reparacion->vehiculo;
+        if ($vehiculo) {
+            $vehiculo->update(['kilometraje' => $reparacion->kilometraje]);
+        }
+    });
+
+    // Cuando se actualiza una reparación existente
+    static::updated(function (Reparacion $reparacion) {
+        $vehiculo = $reparacion->vehiculo;
+        if ($vehiculo) {
+            // Solo actualizamos si la reparación editada es la última registrada
+            $ultimaReparacion = $vehiculo->reparaciones()->latest('created_at')->first();
+            if ($ultimaReparacion && $ultimaReparacion->id === $reparacion->id) {
+                $vehiculo->update(['kilometraje' => $reparacion->kilometraje]);
+            }
+        }
+    });
+}
     protected static function booted()
     {
         static::created(function ($reparacion) {
@@ -50,13 +75,14 @@ class Reparacion extends Model
 
             $phone_number_cliente = '51' . $cliente->telefono; // Asegúrate de que 'telefono' sea el campo correcto
 
-            // Mensaje que deseas enviar
-            $message = "🚗 *¡Nueva reparación registrada!* 🛠️\n\n" .
-            "*Cliente:* {$cliente->nombre}\n" .
-            "*Vehículo:* {$vehiculo->marca} {$vehiculo->modelo} ({$vehiculo->anio})\n" .
-            "*Descripción de la reparación:* {$reparacion->descripcion}\n" .
-            "*Kilometraje actual:* {$reparacion->kilometraje} km\n\n" .
-            "🔧 Si tienes alguna consulta, no dudes en contactarnos. ¡Gracias por confiar en nosotros!";
+            $message = "🔔 *Hola, {$cliente->nombre},*\n\n" .
+            "Queremos informarte que hemos registrado una nueva reparación para tu vehículo *{$vehiculo->marca} {$vehiculo->modelo} ({$vehiculo->anio})*.\n\n" .
+            "📝 *Detalles de la reparación:*\n" .
+            "✔️ Placa: {$vehiculo->placa}\n" .
+            "✔️ Descripción: {$reparacion->descripcion}\n" .
+            "✔️ Kilometraje actual: {$reparacion->kilometraje} km\n\n" .
+            "💡 Nos aseguraremos de que tu vehículo reciba el mejor cuidado. Si necesitas más información o tienes alguna consulta, no dudes en contactarnos.\n\n" .
+            "🤝 ¡Gracias por confiar en nuestro taller!";
 
             // Llamar a la función para enviar el mensaje
             self::enviar_mensaje_whatsapp($phone_number_cliente, $message);

@@ -132,7 +132,8 @@ class ReparacionesRelationManager extends RelationManager
                     ->label('Repuestos Cambiados'),
 
                 # Campo Notas
-                TextColumn::make('notas'),
+                TextColumn::make('notas')
+                    ->extraAttributes(['class' => 'truncate max-w-xs']),
 
             ])
             ->filters([

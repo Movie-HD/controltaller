@@ -6,6 +6,7 @@ use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
@@ -71,10 +72,10 @@ class DatabaseSeeder extends Seeder
             'modelo' => 'Corolla',
             'anio' => 2020,
             'color' => 'Rojo',
-            'kilometraje' => 15000,
+            'km_registro' => 15000,
             'cliente_id' => $cliente1Id,
-            'created_at' => now(),
-            'updated_at' => now(),
+            'created_at' => Carbon::now()->subDays(100),
+            'updated_at' => Carbon::now()->subDays(100),
         ]);
 
         $vehiculo2Id = DB::table('vehiculos')->insertGetId([
@@ -83,10 +84,10 @@ class DatabaseSeeder extends Seeder
             'modelo' => 'Civic',
             'anio' => 2018,
             'color' => 'Negro',
-            'kilometraje' => 30000,
+            'km_registro' => 30000,
             'cliente_id' => $cliente1Id,
-            'created_at' => now(),
-            'updated_at' => now(),
+            'created_at' => Carbon::now()->subDays(100),
+            'updated_at' => Carbon::now()->subDays(100),
         ]);
 
         $vehiculo3Id = DB::table('vehiculos')->insertGetId([
@@ -95,10 +96,10 @@ class DatabaseSeeder extends Seeder
             'modelo' => 'Focus',
             'anio' => 2019,
             'color' => 'Azul',
-            'kilometraje' => 20000,
+            'km_registro' => 20000,
             'cliente_id' => $cliente2Id,
-            'created_at' => now(),
-            'updated_at' => now(),
+            'created_at' => Carbon::now()->subDays(100),
+            'updated_at' => Carbon::now()->subDays(100),
         ]);
 
         // Insertar 7 reparaciones relacionadas con los vehículos, clientes, mecánicos, etc.
@@ -113,8 +114,8 @@ class DatabaseSeeder extends Seeder
                 'vehiculo_id' => $vehiculo1Id,
                 'empresa_id' => $empresaId,
                 'mecanico_id' => $mecanico1Id,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => Carbon::now()->subDays(50),
+                'updated_at' => Carbon::now()->subDays(50),
             ],
             [
                 'descripcion' => 'Revisión y ajuste de frenos',
@@ -126,8 +127,8 @@ class DatabaseSeeder extends Seeder
                 'vehiculo_id' => $vehiculo2Id,
                 'empresa_id' => $empresaId,
                 'mecanico_id' => $mecanico2Id,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => Carbon::now()->subDays(50),
+                'updated_at' => Carbon::now()->subDays(50),
             ],
             [
                 'descripcion' => 'Cambio de filtro de aire',
@@ -139,8 +140,8 @@ class DatabaseSeeder extends Seeder
                 'vehiculo_id' => $vehiculo1Id,
                 'empresa_id' => $empresaId,
                 'mecanico_id' => $mecanico3Id,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => Carbon::now()->subDays(40),
+                'updated_at' => Carbon::now()->subDays(40),
             ],
             [
                 'descripcion' => 'Reemplazo de batería',
@@ -152,8 +153,8 @@ class DatabaseSeeder extends Seeder
                 'vehiculo_id' => $vehiculo3Id,
                 'empresa_id' => $empresaId,
                 'mecanico_id' => $mecanico1Id,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => Carbon::now()->subDays(40),
+                'updated_at' => Carbon::now()->subDays(40),
             ],
             [
                 'descripcion' => 'Cambio de llantas',
@@ -165,8 +166,8 @@ class DatabaseSeeder extends Seeder
                 'vehiculo_id' => $vehiculo2Id,
                 'empresa_id' => $empresaId,
                 'mecanico_id' => $mecanico2Id,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => Carbon::now()->subDays(40),
+                'updated_at' => Carbon::now()->subDays(40),
             ],
             [
                 'descripcion' => 'Diagnóstico de ruido en suspensión',
@@ -178,8 +179,8 @@ class DatabaseSeeder extends Seeder
                 'vehiculo_id' => $vehiculo1Id,
                 'empresa_id' => $empresaId,
                 'mecanico_id' => $mecanico1Id,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => Carbon::now()->subDays(30),
+                'updated_at' => Carbon::now()->subDays(30),
             ],
             [
                 'descripcion' => 'Revisión completa de motor',
@@ -191,47 +192,47 @@ class DatabaseSeeder extends Seeder
                 'vehiculo_id' => $vehiculo3Id,
                 'empresa_id' => $empresaId,
                 'mecanico_id' => $mecanico2Id,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => Carbon::now()->subDays(40),
+                'updated_at' => Carbon::now()->subDays(40),
             ],
             [
                 'descripcion' => 'Revisión del sistema eléctrico',
                 'servicios' => 'Pruebas de alternador y batería',
-                'kilometraje' => 18000,
+                'kilometraje' => 63000,
                 'precio' => 200,
                 'notas' => 'Se detectó una conexión suelta en el alternador, se corrigió durante el servicio.',
                 'cliente_id' => $cliente1Id,
                 'vehiculo_id' => $vehiculo3Id,
                 'empresa_id' => $empresaId,
                 'mecanico_id' => $mecanico3Id,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => Carbon::now()->subDays(30),
+                'updated_at' => Carbon::now()->subDays(30),
             ],
             [
                 'descripcion' => 'Cambio de líquido de frenos',
                 'servicios' => 'Drenado y llenado con líquido nuevo',
-                'kilometraje' => 25000,
+                'kilometraje' => 45000,
                 'precio' => 120,
                 'notas' => 'Todo se realizó correctamente, sin observaciones adicionales.',
                 'cliente_id' => $cliente2Id,
                 'vehiculo_id' => $vehiculo1Id,
                 'empresa_id' => $empresaId,
                 'mecanico_id' => $mecanico1Id,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => Carbon::now()->subDays(20),
+                'updated_at' => Carbon::now()->subDays(20),
             ],
             [
                 'descripcion' => 'Revisión de sistema de escape',
                 'servicios' => 'Inspección y ajuste',
-                'kilometraje' => 60000,
+                'kilometraje' => 68000,
                 'precio' => 300,
                 'notas' => 'Todo en orden, sin recomendaciones adicionales.',
-                'cliente_id' => $cliente2Id,
+                'cliente_id' => $cliente1Id,
                 'vehiculo_id' => $vehiculo3Id,
                 'empresa_id' => $empresaId,
                 'mecanico_id' => $mecanico2Id,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => Carbon::now()->subDays(20),
+                'updated_at' => Carbon::now()->subDays(20),
             ]
         ]);
 

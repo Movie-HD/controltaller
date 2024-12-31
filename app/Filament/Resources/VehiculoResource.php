@@ -51,7 +51,7 @@ class VehiculoResource extends Resource
                 TextInput::make('color')
                     ->required()
                     ->label('Color'),
-                TextInput::make('kilometraje')
+                TextInput::make('km_registro')
                     ->required()
                     ->label('Kilometraje')
                     ->numeric(),
@@ -105,6 +105,10 @@ class VehiculoResource extends Resource
                     ->sortable(),
                 TextColumn::make('color')
                     ->label('Color'),
+                TextColumn::make('km_registro')
+                    ->label('Km Registro')
+                    ->sortable()
+                    ->suffix(' km'),
                 TextColumn::make('kilometraje')
                     ->label('Kilometraje')
                     ->sortable()
@@ -119,6 +123,7 @@ class VehiculoResource extends Resource
                         ->color('primary'),
                     Tables\Actions\ViewAction::make()
                         ->color('success'),
+                    Tables\Actions\DeleteAction::make(),
                 ])
             ])
             ->bulkActions([
