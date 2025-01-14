@@ -137,6 +137,7 @@ class VehiculoResource extends Resource
     {
         return [
             RelationManagers\ReparacionesRelationManager::class,
+            RelationManagers\WhatsappmensajesRelationManager::class,
             # php artisan make:filament-relation-manager NombreResource NombreMetodoRelacion CampoRelacion
             # php artisan make:filament-relation-manager VehiculoResource reparaciones descripcion
         ];

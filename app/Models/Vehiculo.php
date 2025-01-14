@@ -19,6 +19,11 @@ class Vehiculo extends Model
         return $this->hasMany(Reparacion::class);
     }
 
+    public function whatsappmensajes()
+    {
+        return $this->hasMany(WhatsappMensaje::class);
+    }
+
     public function getKilometrajeActualAttribute()
 {
     // Obtener el último kilometraje de la última reparación asociada
