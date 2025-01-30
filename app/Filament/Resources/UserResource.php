@@ -19,7 +19,7 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static ?string $navigationGroup = 'Administrativo';
+    protected static ?string $navigationGroup = 'Gestión';
 
     public static function form(Form $form): Form
     {
@@ -27,6 +27,10 @@ class UserResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name'),
                 Forms\Components\TextInput::make('email'),
+                Forms\Components\TextInput::make('password')
+                    ->password()
+                    ->required()
+                    ->hiddenOn('edit'),
                 Forms\Components\Select::make('roles')
                     ->relationship('roles', 'name')
                     ->multiple()
@@ -38,6 +42,7 @@ class UserResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('created_at', 'desc') # Ordenar por fecha de creación
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('email'),

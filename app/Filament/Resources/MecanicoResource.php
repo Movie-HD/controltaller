@@ -20,9 +20,9 @@ class MecanicoResource extends Resource
 {
     protected static ?string $model = Mecanico::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-hand-raised';
 
-    protected static ?string $navigationGroup = 'Administrativo';
+    protected static ?string $navigationGroup = 'Gestión';
 
     public static function form(Form $form): Form
     {
@@ -42,6 +42,7 @@ class MecanicoResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('created_at', 'desc') # Ordenar por fecha de creación
             ->columns([
                 TextColumn::make('nombre')
                     ->label('Nombre'),

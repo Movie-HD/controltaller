@@ -15,14 +15,15 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\TextInput; # Agregar si es un Input [Form]
 use Filament\Forms\Components\Select; # Agregar si es un Select [Form]
 use Filament\Tables\Columns\TextColumn; # Agregar si es un Column [Table]
+use Filament\Forms\Components\Hidden; # Agregar si es un Hidden [Form]
 
 class ClienteResource extends Resource
 {
     protected static ?string $model = Cliente::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-clock';
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
-    protected static ?string $navigationGroup = 'Administrativo';
+    protected static ?string $navigationGroup = 'Gestión';
 
     public static function form(Form $form): Form
     {
@@ -30,21 +31,19 @@ class ClienteResource extends Resource
             ->schema([
                 TextInput::make('nombre')
                     ->required()
-                    ->label('Nombre del Cliente'),
+                    ->label('Nombre'),
                 TextInput::make('telefono')
                     ->required()
                     ->label('Teléfono'),
-                Select::make('empresa_id')
-                    ->required()
-                    ->relationship('empresa', 'nombre') # Asi obtenemos la rela el nombre de la empresa.
-                    ->preload() # Agregamos eso para que cargue los datos del select.
-                    ->label('Empresa'),
+                Hidden::make('empresa_id')
+                    ->default(1),
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('created_at', 'desc') # Ordenar por fecha de creación
             ->columns([
                 TextColumn::make('nombre')
                     ->label('Nombre'),

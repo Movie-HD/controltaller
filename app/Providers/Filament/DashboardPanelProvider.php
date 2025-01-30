@@ -28,6 +28,8 @@ class DashboardPanelProvider extends PanelProvider
             ->path('dashboard')
             ->login()
             ->registration()
+            ->topNavigation()
+            ->breadcrumbs(false)
             ->plugins([
                 \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
             ])

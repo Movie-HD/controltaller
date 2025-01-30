@@ -41,8 +41,13 @@ class VehiculosRelationManager extends RelationManager
                     ->required()
                     ->label('Año'),
 
+                # Campo Color
+                TextInput::make('color')
+                    ->required()
+                    ->label('Color'),
+
                 # Campo Kilometraje
-                TextInput::make('kilometraje')
+                TextInput::make('km_registro')
                     ->required()
                     ->label('Kilometraje'),
             ]);
@@ -72,11 +77,18 @@ class VehiculosRelationManager extends RelationManager
                 TextColumn::make('anio')
                     ->label('Año')
                     ->sortable(),
-
+                
+                # Campo Kilometraje Registro
+                TextColumn::make('km_registro')
+                    ->label('Km Registro')
+                    ->sortable()
+                    ->suffix(' km'),
+                
                 # Campo Kilometraje
                 TextColumn::make('kilometraje')
                     ->label('Kilometraje')
-                    ->sortable(),
+                    ->sortable()
+                    ->suffix(' km'),
             ])
             ->filters([
                 //

@@ -90,6 +90,7 @@ class WhatsappmensajesRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->defaultSort('created_at', 'desc') # Ordenar por fecha de creación
             ->recordTitleAttribute('mensaje')
             ->columns([
                 Tables\Columns\TextColumn::make('mensaje'),

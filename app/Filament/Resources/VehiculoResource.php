@@ -22,13 +22,13 @@ class VehiculoResource extends Resource
 {
     protected static ?string $model = Vehiculo::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-bolt';
+    protected static ?string $navigationIcon = 'heroicon-s-squares-2x2';
 
     public static function form(Form $form): Form
     {
         return $form
         ->schema([
-            Section::make('Datos')
+            Section::make('Datos del Vehiculo')
             ->columns([
                 'default' => 2, // Por defecto, usa 1 columna para pantallas pequeñas.
                 'sm' => 3, // A partir del tamaño 'sm', usa 2 columnas.
@@ -83,7 +83,7 @@ class VehiculoResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->defaultSort('created_at', 'desc')
+            ->defaultSort('created_at', 'desc') # Ordenar por fecha de creación
             ->columns([
                 TextColumn::make('placa')
                     ->label('Placa')
@@ -119,10 +119,9 @@ class VehiculoResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
                     Tables\Actions\EditAction::make()
                         ->color('primary'),
-                    Tables\Actions\ViewAction::make()
-                        ->color('success'),
                     Tables\Actions\DeleteAction::make(),
                 ])
             ])

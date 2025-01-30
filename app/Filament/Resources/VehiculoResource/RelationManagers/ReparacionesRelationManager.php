@@ -117,6 +117,7 @@ class ReparacionesRelationManager extends RelationManager
             public function table(Table $table): Table
             {
         return $table
+            ->defaultSort('created_at', 'desc') # Ordenar por fecha de creación
             ->recordTitleAttribute('descripcion')
             ->columns([
                 # Campo Descripción
@@ -147,8 +148,7 @@ class ReparacionesRelationManager extends RelationManager
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\ViewAction::make()
                         ->modalHeading('Ver Reparación')
-                        ->slideOver()
-                        ->color('success'),
+                        ->slideOver(),
                     Tables\Actions\EditAction::make()
                         ->modalHeading('Editar Reparación')
                         ->slideOver()

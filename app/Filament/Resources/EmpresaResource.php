@@ -21,7 +21,7 @@ class EmpresaResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office';
 
-    protected static ?string $navigationGroup = 'Administrativo';
+    protected static ?string $navigationGroup = 'Gestión';
 
     public static function form(Form $form): Form
     {
