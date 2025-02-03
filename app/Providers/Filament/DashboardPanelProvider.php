@@ -30,6 +30,7 @@ class DashboardPanelProvider extends PanelProvider
             ->registration()
             ->topNavigation()
             ->breadcrumbs(false)
+            ->brandName('Control Taller')
             ->plugins([
                 \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
             ])
@@ -43,8 +44,8 @@ class DashboardPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                \App\Filament\Widgets\BeneficiosChart::class,
+                \App\Filament\Widgets\GeneralChart::class,
             ])
             ->middleware([
                 EncryptCookies::class,

@@ -14,232 +14,192 @@ class DatabaseSeeder extends Seeder
      * Seed the application's database.
      */
     public function run(): void
-    {
-        // Insertar una empresa directamente
-        $empresaId = DB::table('empresas')->insertGetId([
-            'nombre' => 'Mi Empresa S.A.',
-            'direccion' => 'Av. Ejemplo 123, Lima, Perú',
-            'telefono' => '987654321',
-            'correo' => 'contacto@miempresa.com',
-            'ruc' => '12345678901',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+{
+    // Arrays de datos base
+    $nombresPeruanos = [
+        'José', 'Luis', 'Carlos', 'Miguel', 'Jorge', 'Marco', 'César', 'Juan', 'Pedro', 
+        'María', 'Rosa', 'Ana', 'Carmen', 'Julia', 'Patricia', 'Lucía', 'Sandra', 
+        'Roberto', 'Fernando', 'Diego', 'Alberto', 'Alejandro', 'Daniel', 'Eduardo',
+        'Claudia', 'Susana', 'Mónica', 'Teresa', 'Victoria', 'Beatriz'
+    ];
+    
+    $apellidosPeruanos = [
+        'García', 'Rodríguez', 'López', 'Flores', 'Huamán', 'Quispe', 'Ramos', 'Torres', 
+        'Díaz', 'Vásquez', 'Cruz', 'Ruiz', 'Mendoza', 'Castro', 'Mamani', 'Gonzales',
+        'Chávez', 'Rojas', 'Vargas', 'Hernández', 'Espinoza', 'Castillo', 'Paredes'
+    ];
 
-        // Insertar tres mecánicos
-        $mecanico1Id = DB::table('mecanicos')->insertGetId([
-            'nombre' => 'Juan Pérez',
+    $marcasModelos = [
+        'Toyota' => ['Yaris', 'Corolla', 'RAV4', 'Hilux'],
+        'Hyundai' => ['Accent', 'Elantra', 'Tucson', 'Santa Fe'],
+        'Kia' => ['Rio', 'Sportage', 'Seltos', 'Picanto'],
+        'Suzuki' => ['Swift', 'Vitara', 'S-Presso', 'Baleno'],
+        'Nissan' => ['Sentra', 'Versa', 'Kicks', 'X-Trail'],
+        'Mitsubishi' => ['L200', 'ASX', 'Outlander', 'Montero'],
+        'Chevrolet' => ['Sail', 'Tracker', 'Onix', 'Captiva']
+    ];
+
+    $colores = ['Plata', 'Blanco', 'Negro', 'Gris', 'Rojo', 'Azul', 'Blanco Perlado'];
+
+    $serviciosComunes = [
+        'Cambio de aceite y filtros' => [80, 150],
+        'Afinamiento de motor' => [200, 400],
+        'Cambio de pastillas de freno' => [150, 300],
+        'Cambio de amortiguadores' => [400, 800],
+        'Cambio de correa de distribución' => [500, 1000],
+        'Mantenimiento de transmisión' => [300, 600],
+        'Cambio de embrague' => [800, 1500],
+        'Reparación sistema eléctrico' => [200, 500],
+        'Cambio de batería' => [350, 700],
+        'Cambio de llantas' => [600, 1200],
+        'Alineamiento y balanceo' => [100, 200],
+        'Diagnóstico computarizado' => [80, 150],
+        'Limpieza de inyectores' => [150, 300],
+        'Cambio de bujías' => [100, 200],
+        'Reparación de alternador' => [250, 500]
+    ];
+
+    // Insertar empresa
+    $empresaId = DB::table('empresas')->insertGetId([
+        'nombre' => 'AutoTaller Perú S.A.C.',
+        'direccion' => 'Av. Industrial 1234, San Juan de Lurigancho',
+        'telefono' => '01-3749288',
+        'correo' => 'contacto@autotallerperu.com',
+        'ruc' => '20505327894',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    // Insertar mecánicos
+    $mecanicosIds = [];
+    $nombresMecanicos = [
+        'Jorge Ramírez Torres' => 'Especialista en motor y sistemas de inyección',
+        'Manuel Quispe Huamán' => 'Especialista en sistemas eléctricos',
+        'Roberto Flores Mendoza' => 'Especialista en suspensión y dirección',
+        'Carlos Mendoza Vásquez' => 'Especialista en transmisión automática',
+        'Luis Torres Castro' => 'Especialista en diagnóstico computarizado'
+    ];
+
+    foreach ($nombresMecanicos as $nombre => $especialidad) {
+        $mecanicosIds[] = DB::table('mecanicos')->insertGetId([
+            'nombre' => $nombre,
             'empresa_id' => $empresaId,
             'created_at' => now(),
             'updated_at' => now(),
-        ]);
-
-        $mecanico2Id = DB::table('mecanicos')->insertGetId([
-            'nombre' => 'Carlos García',
-            'empresa_id' => $empresaId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $mecanico3Id = DB::table('mecanicos')->insertGetId([
-            'nombre' => 'Ana López',
-            'empresa_id' => $empresaId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        // Insertar dos clientes relacionados con la empresa
-        $cliente1Id = DB::table('clientes')->insertGetId([
-            'nombre' => 'Pedro González',
-            'telefono' => '998877665',
-            'empresa_id' => $empresaId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $cliente2Id = DB::table('clientes')->insertGetId([
-            'nombre' => 'María Rodríguez',
-            'telefono' => '977665544',
-            'empresa_id' => $empresaId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        // Insertar tres vehículos relacionados con los clientes
-        $vehiculo1Id = DB::table('vehiculos')->insertGetId([
-            'placa' => 'ABC123',
-            'marca' => 'Toyota',
-            'modelo' => 'Corolla',
-            'anio' => 2020,
-            'color' => 'Rojo',
-            'km_registro' => 15000,
-            'cliente_id' => $cliente1Id,
-            'created_at' => Carbon::now()->subDays(100),
-            'updated_at' => Carbon::now()->subDays(100),
-        ]);
-
-        $vehiculo2Id = DB::table('vehiculos')->insertGetId([
-            'placa' => 'XYZ456',
-            'marca' => 'Honda',
-            'modelo' => 'Civic',
-            'anio' => 2018,
-            'color' => 'Negro',
-            'km_registro' => 30000,
-            'cliente_id' => $cliente1Id,
-            'created_at' => Carbon::now()->subDays(100),
-            'updated_at' => Carbon::now()->subDays(100),
-        ]);
-
-        $vehiculo3Id = DB::table('vehiculos')->insertGetId([
-            'placa' => 'LMN789',
-            'marca' => 'Ford',
-            'modelo' => 'Focus',
-            'anio' => 2019,
-            'color' => 'Azul',
-            'km_registro' => 20000,
-            'cliente_id' => $cliente2Id,
-            'created_at' => Carbon::now()->subDays(100),
-            'updated_at' => Carbon::now()->subDays(100),
-        ]);
-
-        // Insertar 7 reparaciones relacionadas con los vehículos, clientes, mecánicos, etc.
-        DB::table('reparacions')->insert([
-            [
-                'descripcion' => 'Cambio de aceite y filtro',
-                'servicios' => 'Aceite sintético y filtro nuevo',
-                'kilometraje' => 15000,
-                'precio' => 120,
-                'notas' => 'Todo se realizó correctamente, no hubo observaciones adicionales.',
-                'cliente_id' => $cliente1Id,
-                'vehiculo_id' => $vehiculo1Id,
-                'empresa_id' => $empresaId,
-                'mecanico_id' => $mecanico1Id,
-                'created_at' => Carbon::now()->subDays(50),
-                'updated_at' => Carbon::now()->subDays(50),
-            ],
-            [
-                'descripcion' => 'Revisión y ajuste de frenos',
-                'servicios' => 'Limpieza y ajuste de frenos traseros',
-                'kilometraje' => 20000,
-                'precio' => 90,
-                'notas' => 'Se recomendó reemplazar las pastillas de freno delanteras, pero el cliente decidió hacerlo en una visita futura.',
-                'cliente_id' => $cliente1Id,
-                'vehiculo_id' => $vehiculo2Id,
-                'empresa_id' => $empresaId,
-                'mecanico_id' => $mecanico2Id,
-                'created_at' => Carbon::now()->subDays(50),
-                'updated_at' => Carbon::now()->subDays(50),
-            ],
-            [
-                'descripcion' => 'Cambio de filtro de aire',
-                'servicios' => 'Filtro de aire nuevo',
-                'kilometraje' => 22000,
-                'precio' => 50,
-                'notas' => 'Se recomendó limpieza del sistema de admisión, pero el cliente optó por no realizarlo en este momento.',
-                'cliente_id' => $cliente1Id,
-                'vehiculo_id' => $vehiculo1Id,
-                'empresa_id' => $empresaId,
-                'mecanico_id' => $mecanico3Id,
-                'created_at' => Carbon::now()->subDays(40),
-                'updated_at' => Carbon::now()->subDays(40),
-            ],
-            [
-                'descripcion' => 'Reemplazo de batería',
-                'servicios' => 'Instalación de batería nueva',
-                'kilometraje' => 32000,
-                'precio' => 480,
-                'notas' => 'Todo en orden, no hubo observaciones adicionales.',
-                'cliente_id' => $cliente2Id,
-                'vehiculo_id' => $vehiculo3Id,
-                'empresa_id' => $empresaId,
-                'mecanico_id' => $mecanico1Id,
-                'created_at' => Carbon::now()->subDays(40),
-                'updated_at' => Carbon::now()->subDays(40),
-            ],
-            [
-                'descripcion' => 'Cambio de llantas',
-                'servicios' => 'Llantas nuevas y balanceo',
-                'kilometraje' => 40000,
-                'precio' => 1500,
-                'notas' => 'Se recomendó revisar alineación, pero el cliente decidió postergar la revisión.',
-                'cliente_id' => $cliente2Id,
-                'vehiculo_id' => $vehiculo2Id,
-                'empresa_id' => $empresaId,
-                'mecanico_id' => $mecanico2Id,
-                'created_at' => Carbon::now()->subDays(40),
-                'updated_at' => Carbon::now()->subDays(40),
-            ],
-            [
-                'descripcion' => 'Diagnóstico de ruido en suspensión',
-                'servicios' => 'Inspección y ajuste',
-                'kilometraje' => 35000,
-                'precio' => 180,
-                'notas' => 'Se identificó desgaste en amortiguadores traseros. El cliente prefirió no reemplazarlos por ahora.',
-                'cliente_id' => $cliente1Id,
-                'vehiculo_id' => $vehiculo1Id,
-                'empresa_id' => $empresaId,
-                'mecanico_id' => $mecanico1Id,
-                'created_at' => Carbon::now()->subDays(30),
-                'updated_at' => Carbon::now()->subDays(30),
-            ],
-            [
-                'descripcion' => 'Revisión completa de motor',
-                'servicios' => 'Inspección y limpieza de motor',
-                'kilometraje' => 50000,
-                'precio' => 350,
-                'notas' => 'Todo se realizó correctamente, sin observaciones adicionales.',
-                'cliente_id' => $cliente1Id,
-                'vehiculo_id' => $vehiculo3Id,
-                'empresa_id' => $empresaId,
-                'mecanico_id' => $mecanico2Id,
-                'created_at' => Carbon::now()->subDays(40),
-                'updated_at' => Carbon::now()->subDays(40),
-            ],
-            [
-                'descripcion' => 'Revisión del sistema eléctrico',
-                'servicios' => 'Pruebas de alternador y batería',
-                'kilometraje' => 63000,
-                'precio' => 200,
-                'notas' => 'Se detectó una conexión suelta en el alternador, se corrigió durante el servicio.',
-                'cliente_id' => $cliente1Id,
-                'vehiculo_id' => $vehiculo3Id,
-                'empresa_id' => $empresaId,
-                'mecanico_id' => $mecanico3Id,
-                'created_at' => Carbon::now()->subDays(30),
-                'updated_at' => Carbon::now()->subDays(30),
-            ],
-            [
-                'descripcion' => 'Cambio de líquido de frenos',
-                'servicios' => 'Drenado y llenado con líquido nuevo',
-                'kilometraje' => 45000,
-                'precio' => 120,
-                'notas' => 'Todo se realizó correctamente, sin observaciones adicionales.',
-                'cliente_id' => $cliente2Id,
-                'vehiculo_id' => $vehiculo1Id,
-                'empresa_id' => $empresaId,
-                'mecanico_id' => $mecanico1Id,
-                'created_at' => Carbon::now()->subDays(20),
-                'updated_at' => Carbon::now()->subDays(20),
-            ],
-            [
-                'descripcion' => 'Revisión de sistema de escape',
-                'servicios' => 'Inspección y ajuste',
-                'kilometraje' => 68000,
-                'precio' => 300,
-                'notas' => 'Todo en orden, sin recomendaciones adicionales.',
-                'cliente_id' => $cliente1Id,
-                'vehiculo_id' => $vehiculo3Id,
-                'empresa_id' => $empresaId,
-                'mecanico_id' => $mecanico2Id,
-                'created_at' => Carbon::now()->subDays(20),
-                'updated_at' => Carbon::now()->subDays(20),
-            ]
-        ]);
-
-        $user = User::create([
-            'name' => 'Administrador',
-            'email' => 'test@example.com',
-            'password' => Hash::make('password'),
         ]);
     }
+
+    // Insertar 30 clientes
+    $clientesIds = [];
+    for ($i = 0; $i < 30; $i++) {
+        $nombreCliente = $nombresPeruanos[array_rand($nombresPeruanos)] . ' ' . 
+                        $apellidosPeruanos[array_rand($apellidosPeruanos)] . ' ' .
+                        $apellidosPeruanos[array_rand($apellidosPeruanos)];
+        
+        $fechaCreacion = Carbon::now()->subDays(rand(1, 365));
+        
+        $clientesIds[] = DB::table('clientes')->insertGetId([
+            'nombre' => $nombreCliente,
+            'telefono' => '9' . rand(10000000, 99999999),
+            'empresa_id' => $empresaId,
+            'created_at' => $fechaCreacion,
+            'updated_at' => $fechaCreacion,
+        ]);
+    }
+
+    // Insertar 45 vehículos
+    $vehiculosIds = [];
+    $letras = range('A', 'Z');
+    for ($i = 0; $i < 45; $i++) {
+        $marca = array_rand($marcasModelos);
+        $modelo = $marcasModelos[$marca][array_rand($marcasModelos[$marca])];
+        $kmInicial = rand(10000, 50000);
+        $fechaCreacion = Carbon::now()->subDays(rand(1, 365));
+        
+        // Generar placa peruana válida
+        $placa = $letras[array_rand($letras)] . 
+                 $letras[array_rand($letras)] . 
+                 $letras[array_rand($letras)] . 
+                 rand(100, 999);
+
+        $vehiculosIds[] = DB::table('vehiculos')->insertGetId([
+            'placa' => $placa,
+            'marca' => $marca,
+            'modelo' => $modelo,
+            'anio' => rand(2015, 2023),
+            'color' => $colores[array_rand($colores)],
+            'km_registro' => $kmInicial,
+            'kilometraje' => $kmInicial,
+            'cliente_id' => $clientesIds[array_rand($clientesIds)],
+            'created_at' => $fechaCreacion,
+            'updated_at' => $fechaCreacion,
+        ]);
+    }
+
+    // Generar reparaciones para cada vehículo
+    foreach ($vehiculosIds as $vehiculoId) {
+        $vehiculo = DB::table('vehiculos')->where('id', $vehiculoId)->first();
+        $kmActual = $vehiculo->km_registro;
+        
+        // Generar entre 7 y 12 reparaciones por vehículo
+        $numReparaciones = rand(7, 12);
+        
+        for ($i = 0; $i < $numReparaciones; $i++) {
+            $servicio = array_rand($serviciosComunes);
+            $precioRango = $serviciosComunes[$servicio];
+            $kmIncremento = rand(3000, 8000);
+            $kmActual += $kmIncremento;
+            
+            // Generar fecha coherente
+            $fechaReparacion = Carbon::now()->subDays(rand(1, 365));
+
+            // Generar notas técnicas coherentes
+            $notasBase = [
+                "Se realizó el servicio según especificaciones del fabricante.",
+                "Cliente reportó {problema}. Se solucionó con {solucion}.",
+                "Mantenimiento preventivo completado. Se recomienda próxima revisión a los {km} km.",
+                "Se detectaron desgastes normales para el kilometraje.",
+                "Trabajo realizado con repuestos originales.",
+            ];
+
+            $problemas = ["ruido en suspensión", "pérdida de potencia", "consumo excesivo de combustible", "vibración"];
+            $soluciones = ["ajuste y calibración", "reemplazo de componentes", "limpieza del sistema", "actualización de software"];
+
+            $nota = $notasBase[array_rand($notasBase)];
+            $nota = str_replace(
+                ['{problema}', '{solucion}', '{km}'],
+                [$problemas[array_rand($problemas)], $soluciones[array_rand($soluciones)], $kmActual + 5000],
+                $nota
+            );
+
+            DB::table('reparacions')->insert([
+                'descripcion' => $servicio,
+                'servicios' => "Incluye: " . implode(", ", array_map(function() {
+                    return ["mano de obra", "repuestos originales", "limpieza", "diagnóstico"][rand(0, 3)];
+                }, range(1, 3))),
+                'kilometraje' => $kmActual,
+                'precio' => rand($precioRango[0], $precioRango[1]),
+                'notas' => $nota,
+                'cliente_id' => $vehiculo->cliente_id,
+                'vehiculo_id' => $vehiculoId,
+                'empresa_id' => $empresaId,
+                'mecanico_id' => $mecanicosIds[array_rand($mecanicosIds)],
+                'created_at' => $fechaReparacion,
+                'updated_at' => $fechaReparacion,
+            ]);
+
+            // Actualizar kilometraje del vehículo
+            DB::table('vehiculos')
+                ->where('id', $vehiculoId)
+                ->update(['kilometraje' => $kmActual]);
+        }
+    }
+
+    // Crear usuario administrador
+    User::create([
+        'name' => 'Administrador',
+        'email' => 'test@example.com',
+        'password' => Hash::make('password'),
+    ]);
+}
 }

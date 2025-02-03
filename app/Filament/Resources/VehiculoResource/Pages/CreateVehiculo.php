@@ -16,7 +16,7 @@ class CreateVehiculo extends CreateRecord
 
     protected function getRedirectUrl(): string
     {
-        return $this->getResource()::getUrl('edit', ['record' => $this->record->id]);
+        return $this->getResource()::getUrl('edit', ['record' => $this->record->id]) . '?activeRelationManager=0';
     }
     protected function handleRecordCreation(array $data): Model
 {

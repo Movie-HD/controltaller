@@ -76,13 +76,16 @@ class VehiculoResource extends Resource
                         'sm' => 3, // Ocupa 2 columnas en dispositivos grandes.
                     ]),
             ])
-            ->collapsed(fn ($livewire) => $livewire->getRecord() !== null)
+            #->collapsed(fn ($livewire) => $livewire->getRecord() !== null)
         ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->recordUrl(function ($record) {
+                return static::getUrl('view', ['record' => $record->id]) . '?activeRelationManager=0';
+            })
             ->defaultSort('created_at', 'desc') # Ordenar por fecha de creación
             ->columns([
                 TextColumn::make('placa')
@@ -136,7 +139,7 @@ class VehiculoResource extends Resource
     {
         return [
             RelationManagers\ReparacionesRelationManager::class,
-            RelationManagers\WhatsappmensajesRelationManager::class,
+            #RelationManagers\WhatsappmensajesRelationManager::class,
             # php artisan make:filament-relation-manager NombreResource NombreMetodoRelacion CampoRelacion
             # php artisan make:filament-relation-manager VehiculoResource reparaciones descripcion
         ];

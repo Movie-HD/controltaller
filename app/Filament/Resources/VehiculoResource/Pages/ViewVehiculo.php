@@ -13,7 +13,16 @@ class ViewVehiculo extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
+            Actions\EditAction::make()
+            ->url($this->getResource()::getUrl('edit', ['record' => $this->record->id]) . '?activeRelationManager=0'),
         ];
+    }
+    public function hasCombinedRelationManagerTabsWithContent(): bool
+    {
+        return true;
+    }
+    public function getContentTabLabel(): ?string
+    {
+        return 'Datos del Vehículo';
     }
 }
