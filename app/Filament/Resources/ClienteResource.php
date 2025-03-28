@@ -67,6 +67,7 @@ class ClienteResource extends Resource
     {
         return [
             RelationManagers\VehiculosRelationManager::class,
+            RelationManagers\ReparacionesRelationManager::class,
             # php artisan make:filament-relation-manager ClienteResource vehiculos placa
         ];
     }

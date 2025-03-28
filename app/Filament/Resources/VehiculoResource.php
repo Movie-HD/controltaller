@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\VehiculoResource\Pages;
 use App\Filament\Resources\VehiculoResource\RelationManagers;
+use App\Models\Cliente;
 use App\Models\Vehiculo;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -56,21 +57,36 @@ class VehiculoResource extends Resource
                     ->label('Kilometraje')
                     ->numeric(),
                 Select::make('cliente_id')
-                    ->required()
                     ->label('Cliente')
-                    ->relationship('cliente', 'nombre') # Asi obtenemos la rela el nombre de la empresa.
-                    ->preload() # Agregamos eso para que cargue los datos del select.
+                    ->required()
                     ->searchable()
-                    ->createOptionForm([ # Agregamos esto para crear un nuevo cliente desde un modal.
+                    ->preload()
+                    ->getSearchResultsUsing(function (string $search): array {
+                        session(['cliente_search' => $search]);
+
+                        return Cliente::whereRaw("REPLACE(nombre, ' ', '') LIKE ?", ["%".str_replace(' ', '', $search)."%"])
+                            ->limit(50)
+                            ->pluck('nombre', 'id')
+                            ->toArray();
+                    })
+                    ->getOptionLabelUsing(fn ($value): ?string => Cliente::find($value)?->nombre)
+                    ->createOptionForm([
                         TextInput::make('nombre')
                             ->label('Nombre')
-                            ->required(),
+                            ->required()
+                            ->default(fn () => session('cliente_search', '')), // Usa el valor buscado
                         TextInput::make('telefono')
                             ->label('Teléfono')
                             ->required(),
                         Hidden::make('empresa_id')
                             ->default(1),
                     ])
+                    ->createOptionUsing(function (array $data): int {
+                        // Verifica los datos recibidos antes de crear el cliente
+                        dd($data);
+
+                        return Cliente::create($data)->id;
+                    })
                     ->columnSpan([
                         'default' => 2, // Por defecto, ocupa 1 columna en dispositivos pequeños.
                         'sm' => 3, // Ocupa 2 columnas en dispositivos grandes.
@@ -139,7 +155,7 @@ class VehiculoResource extends Resource
     {
         return [
             RelationManagers\ReparacionesRelationManager::class,
-            #RelationManagers\WhatsappmensajesRelationManager::class,
+            RelationManagers\WhatsappmensajesRelationManager::class,
             # php artisan make:filament-relation-manager NombreResource NombreMetodoRelacion CampoRelacion
             # php artisan make:filament-relation-manager VehiculoResource reparaciones descripcion
         ];

@@ -35,7 +35,7 @@ class VehiculosRelationManager extends RelationManager
                 TextInput::make('modelo')
                     ->required()
                     ->label('Modelo'),
-                
+
                 # Campo Año
                 TextInput::make('anio')
                     ->required()
@@ -77,13 +77,13 @@ class VehiculosRelationManager extends RelationManager
                 TextColumn::make('anio')
                     ->label('Año')
                     ->sortable(),
-                
+
                 # Campo Kilometraje Registro
                 TextColumn::make('km_registro')
                     ->label('Km Registro')
                     ->sortable()
                     ->suffix(' km'),
-                
+
                 # Campo Kilometraje
                 TextColumn::make('kilometraje')
                     ->label('Kilometraje')

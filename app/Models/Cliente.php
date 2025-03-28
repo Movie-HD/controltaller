@@ -13,9 +13,19 @@ class Cliente extends Model
     {
         return $this->belongsTo(Empresa::class);
     }
-    
+
     public function vehiculos()
     {
         return $this->hasMany(Vehiculo::class);
     }
+
+    public function reparaciones()
+{
+    return $this->hasManyThrough(Reparacion::class, Vehiculo::class);
+}
+
+public function vehiculo()
+{
+    return $this->belongsTo(Vehiculo::class);
+}
 }
