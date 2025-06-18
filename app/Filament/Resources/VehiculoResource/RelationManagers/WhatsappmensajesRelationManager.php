@@ -17,10 +17,15 @@ use Filament\Tables\Columns\TextColumn; # Agregar si es un Column [Table]
 use Filament\Forms\Components\DateTimePicker; # Agregar si es un DateTimePicker [Form]
 use Filament\Forms\Components\Hidden; # Agregar si es un Hidden [Form]
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Database\Eloquent\Model; # Se agrego para cambiar el titulo
 class WhatsappmensajesRelationManager extends RelationManager
 {
     protected static string $relationship = 'whatsappmensajes';
+
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return 'Mensajes de WhatsApp';
+    }
 
     public function form(Form $form): Form
     {
@@ -39,7 +44,7 @@ class WhatsappmensajesRelationManager extends RelationManager
                             $set('mensaje', $template ? $template->mensaje : null);
                         }
                     })
-                    
+
                     # SubModal para crear una nueva plantilla
                     ->searchable()
                     ->preload()
@@ -113,15 +118,15 @@ class WhatsappmensajesRelationManager extends RelationManager
                         [$cliente?->nombre ?? '', $vehiculo?->marca ?? '', $vehiculo?->modelo ?? '', $vehiculo?->anio ?? '', $vehiculo?->placa ?? ''],
                         $mensajeActual
                     );
-        
+
                     return $data; // Devuelve los datos modificados
                 })
                 ->after(function (array $data) {
                     $cliente = \App\Models\Cliente::find($data['cliente_id']);
                     $phone_number_cliente = '51' . $cliente->telefono;
-                    
+
                     $fecha_programada = \Carbon\Carbon::parse($data['fecha_programada']);
-                    
+
                     \App\Jobs\SendWhatsAppMessage::dispatch($phone_number_cliente, $data['mensaje'])
                         ->delay($fecha_programada);
                 })
@@ -137,5 +142,5 @@ class WhatsappmensajesRelationManager extends RelationManager
                 ]),
             ]);
     }
-    
+
 }
