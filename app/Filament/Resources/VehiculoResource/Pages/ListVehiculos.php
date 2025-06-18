@@ -11,11 +11,11 @@ class ListVehiculos extends ListRecords
 {
     protected static string $resource = VehiculoResource::class;
 
-    public function getTitle(): string
-    {
+    #public function getTitle(): string
+    #{
 
-        return "Hola";
-    }
+        #return "Hola";
+    #}
 
     protected function getHeaderActions(): array
     {

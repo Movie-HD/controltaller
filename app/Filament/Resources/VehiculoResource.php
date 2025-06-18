@@ -83,7 +83,6 @@ class VehiculoResource extends Resource
                     ])
                     ->createOptionUsing(function (array $data): int {
                         // Verifica los datos recibidos antes de crear el cliente
-                        dd($data);
 
                         return Cliente::create($data)->id;
                     })
