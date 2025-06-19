@@ -67,7 +67,7 @@ class DashboardPanelProvider extends PanelProvider
                     }
                 </style>')
             )
-            ->login()
+            ->login(\App\Filament\Pages\Auth\Login::class)
             ->registration()
             ->topNavigation()
             ->breadcrumbs(false)
