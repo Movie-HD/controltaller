@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use Log;
 use App\Models\Cliente;
 use App\Models\Vehiculo;
 use App\Models\Reparacion;
@@ -28,7 +29,7 @@ class EstadisticasStats extends BaseWidget
 
     protected function getStats(): array
     {
-        $preset = $this->filters['presetRange'] ?? 'last_7_days';
+        $preset = $this->pageFilters['presetRange'] ?? 'last_7_days';
 
         $startDate = null;
         $endDate = now()->endOfDay();
@@ -61,12 +62,12 @@ class EstadisticasStats extends BaseWidget
                 break;
 
             case 'custom':
-                $startDate = !is_null($this->filters['startDate'] ?? null)
-                    ? Carbon::parse($this->filters['startDate'])->startOfDay()
+                $startDate = !is_null($this->pageFilters['startDate'] ?? null)
+                    ? Carbon::parse($this->pageFilters['startDate'])->startOfDay()
                     : now()->subDays(6)->startOfDay();
 
-                $endDate = !is_null($this->filters['endDate'] ?? null)
-                    ? Carbon::parse($this->filters['endDate'])->endOfDay()
+                $endDate = !is_null($this->pageFilters['endDate'] ?? null)
+                    ? Carbon::parse($this->pageFilters['endDate'])->endOfDay()
                     : now()->endOfDay();
                 break;
 
@@ -127,7 +128,7 @@ class EstadisticasStats extends BaseWidget
         $days = (int) $start->diffInDays($end);
 
         // Log temporal para depuración
-        \Log::debug('getDailyCounts', [
+        Log::debug('getDailyCounts', [
             'start' => $start->toDateString(),
             'end' => $end->toDateString(),
             'days' => $days,

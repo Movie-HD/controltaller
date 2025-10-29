@@ -8,7 +8,7 @@ use Illuminate\Support\Carbon;
 
 class BeneficiosChart extends ChartWidget
 {
-    protected static ?string $heading = 'Beneficios';
+    protected ?string $heading = 'Beneficios';
     protected static ?int $sort = 3;
 
     public ?string $filter = 'week';

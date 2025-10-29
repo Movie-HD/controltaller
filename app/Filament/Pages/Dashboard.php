@@ -2,11 +2,11 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Forms\Form;
+use Filament\View\PanelsRenderHook;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\DatePicker;
 use Filament\Pages\Dashboard as BaseDashboard;
-
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 
 use Filament\Facades\Filament;
@@ -19,7 +19,7 @@ class Dashboard extends BaseDashboard
     public function booted(): void
     {
         Filament::registerRenderHook(
-            \Filament\View\PanelsRenderHook::HEAD_END,
+            PanelsRenderHook::HEAD_END,
             fn () => Blade::render('
                 <style>
                     .tita {
@@ -34,10 +34,10 @@ class Dashboard extends BaseDashboard
         );
     }
 
-    public function filtersForm(Form $form): Form
+    public function filtersForm(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make()
                     ->schema([
                         Select::make('presetRange')

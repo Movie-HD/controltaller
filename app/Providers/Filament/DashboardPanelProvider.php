@@ -2,6 +2,11 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\Login;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
+use App\Filament\Pages\Dashboard;
+use App\Filament\Widgets\BeneficiosChart;
+use App\Filament\Widgets\GeneralChart;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -67,13 +72,13 @@ class DashboardPanelProvider extends PanelProvider
                     }
                 </style>')
             )
-            ->login(\App\Filament\Pages\Auth\Login::class)
+            ->login(Login::class)
             ->registration()
             ->topNavigation()
             ->breadcrumbs(false)
             ->brandName('Control Taller')
             ->plugins([
-                \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
+                FilamentShieldPlugin::make(),
             ])
             ->colors([
                 'primary' => Color::Amber,
@@ -81,12 +86,12 @@ class DashboardPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
-                \App\Filament\Pages\Dashboard::class,
+                Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                \App\Filament\Widgets\BeneficiosChart::class,
-                \App\Filament\Widgets\GeneralChart::class,
+                BeneficiosChart::class,
+                GeneralChart::class,
             ])
             ->middleware([
                 EncryptCookies::class,

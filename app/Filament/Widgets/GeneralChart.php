@@ -10,7 +10,7 @@ use Illuminate\Support\Carbon;
 
 class GeneralChart extends ChartWidget
 {
-    protected static ?string $heading = 'Estadísticas';
+    protected ?string $heading = 'Estadísticas';
     protected static ?int $sort = 2;
 
     // Establecer filtro por defecto
