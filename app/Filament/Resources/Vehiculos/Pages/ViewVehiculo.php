@@ -15,7 +15,7 @@ class ViewVehiculo extends ViewRecord
     {
         return [
             EditAction::make()
-            ->url($this->getResource()::getUrl('edit', ['record' => $this->record->id]) . '?activeRelationManager=0'),
+                ->url($this->getResource()::getUrl('edit', ['record' => $this->record->id]) . '?activeRelationManager=0&&relation=0'),
         ];
     }
     public function hasCombinedRelationManagerTabsWithContent(): bool

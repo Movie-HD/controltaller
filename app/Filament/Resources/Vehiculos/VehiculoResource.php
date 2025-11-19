@@ -111,7 +111,7 @@ class VehiculoResource extends Resource
     {
         return $table
             ->recordUrl(function ($record) {
-                return static::getUrl('view', ['record' => $record->id]) . '?activeRelationManager=0';
+                return static::getUrl('view', ['record' => $record->id]) . '?activeRelationManager=0&&relation=0';
             })
             ->defaultSort('created_at', 'desc') # Ordenar por fecha de creación
             ->columns([

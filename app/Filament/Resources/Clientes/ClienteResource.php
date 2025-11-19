@@ -51,6 +51,9 @@ class ClienteResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->recordUrl(function ($record) {
+                return static::getUrl('edit', ['record' => $record->id]) . '?relation=0';
+            })
             ->defaultSort('created_at', 'desc') # Ordenar por fecha de creación
             ->columns([
                 TextColumn::make('nombre')
