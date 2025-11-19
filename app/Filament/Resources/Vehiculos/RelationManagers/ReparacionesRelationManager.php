@@ -22,9 +22,14 @@ use Filament\Forms\Components\Select; # Agregar si es un Select [Form]
 use Filament\Forms\Components\Textarea; # Agregar si es un Textarea [Form]
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\Hidden; # Agregar si es un Hidden [Form]
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Repeater\TableColumn;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Get; # Agregar para funcion de opciones
 use Illuminate\Support\Collection; # Agregar para funcion de opciones
 use Filament\Forms\Set; # Agregar para afterStateUpdated [Form]
+use Illuminate\Database\Eloquent\Model;
+use App\Filament\Resources\Vehiculos\Pages\EditVehiculo;
 
 class ReparacionesRelationManager extends RelationManager
 {
@@ -34,37 +39,26 @@ class ReparacionesRelationManager extends RelationManager
     {
         return $schema
         ->components([
-            Grid::make([
-                'default' => 2, // Por defecto, usa 1 columna para pantallas pequeñas.
-                'sm' => 2, // A partir del tamaño 'sm', usa 2 columnas.
-            ])
-            ->schema([
                 # Campo Descripción
                 TextArea::make('descripcion')
                     ->label('Descripcion de Reparación')
                     ->required()
                     ->columnSpan([
                         'default' => 2, // Por defecto, ocupa 1 columna en dispositivos pequeños.
-                        'sm' => 3, // Ocupa 2 columnas en dispositivos grandes.
+                        'sm' => 2, // Ocupa 2 columnas en dispositivos grandes.
                     ]),
 
                 # Campo Servicios
                 TextArea::make('servicios')
                     ->label('Repuestos Cambiados')
                     ->required()
-                    ->columnSpan([
-                        'default' => 2, // Por defecto, ocupa 1 columna en dispositivos pequeños.
-                        'sm' => 3, // Ocupa 2 columnas en dispositivos grandes.
-                    ]),
+                    ->columnSpan([ 'default' => 2, 'sm' => 2 ]),
 
                 # Campo Notas
                 TextArea::make('notas')
                     ->label('Notas Adicionales')
                     ->nullable()
-                    ->columnSpan([
-                        'default' => 2, // Por defecto, ocupa 1 columna en dispositivos pequeños.
-                        'sm' => 3, // Ocupa 2 columnas en dispositivos grandes.
-                    ]),
+                    ->columnSpan([ 'default' => 2, 'sm' => 2 ]),
 
                 # Campo Kilometraje
                 TextInput::make('kilometraje')
@@ -94,12 +88,14 @@ class ReparacionesRelationManager extends RelationManager
 
                 # Campo Mecánico
                 Select::make('mecanico_id')
-                        ->label('Mecánico')
-                        ->relationship('mecanico', 'nombre')
-                        ->required()
-                        ->live()
-                        ->searchable()
-                        ->preload()
+                    ->label('Mecánico')
+                    ->relationship('mecanico', 'nombre')
+                    # Falta definir como json para que sea multiselect.
+                    ->multiple()
+                    ->required()
+                    ->live()
+                    ->searchable()
+                    ->preload()
 
                         # SubModal para crear un nuevo Mecánico
                         ->createOptionForm([
@@ -112,17 +108,31 @@ class ReparacionesRelationManager extends RelationManager
                                 ->default(1)
                                 ->extraAttributes(['style' => 'display:none;']),
                         ])
-                        ->columnSpan([
-                            'default' => 2, // Por defecto, ocupa 1 columna en dispositivos pequeños.
-                            'sm' => 2, // Ocupa 2 columnas en dispositivos grandes.
-                        ]),
+                    ->columnSpan([ 'default' => 2, 'sm' => 2 ]),
 
+                # Falta completar la logica de este repeater para agregar los servicios como oportunidades.
+                Repeater::make('test')
+                    ->table([
+                            TableColumn::make('Servicio'),
+                            TableColumn::make('¿Cuando?'),
+                        ])
+                    ->compact()
+                    ->schema([
+                        TextInput::make('servicio')
+                            ->placeholder('Servicio')
+                            ->required(),
+                        DatePicker::make('fecha')
+                            ->required()
                     ])
-                ]);
-            }
+                    ->columnSpan([ 'default' => 2, 'sm' => 2 ])
+                    ->hiddenLabel()
+                    ->addActionLabel('Nuevo Servicio'),
+                ])
+                ->columns([ 'default' => 2, 'sm' => 2 ]);
+    }
 
-            public function table(Table $table): Table
-            {
+    public function table(Table $table): Table
+    {
         return $table
             ->defaultSort('created_at', 'desc') # Ordenar por fecha de creación
             ->recordTitleAttribute('descripcion')
@@ -163,6 +173,25 @@ class ReparacionesRelationManager extends RelationManager
                     DeleteAction::make(),
                 ])
             ])
+
+            # Comprobamos si estamos en View o Edit para que el enlace de la tabla de cada registro nos abra el modal EditAction o ViewAction
+            # con [recordAction] para modales y [recordUrl] cuando te saca de la página actual y te lleva a una URL completamente nueva.
+            # Para eso necesitamos importar Model y EditVehiculo(Pagina de Edición de Vehiculo)
+            ->recordAction(function (?Model $record): string {
+
+                // $this->pageClass ya es un string con el nombre completo de la clase
+                $currentPageClass = $this->pageClass;
+
+                // Comparamos el nombre de la clase actual con el nombre de la clase EditVehiculo
+                if ($currentPageClass === EditVehiculo::class) {
+                    // Si estamos en la página de edición, devuelve 'edit'
+                    // para abrir el EditAction como modal.
+                    return 'edit';
+                }
+
+                // Por defecto, devuelve 'view' para abrir el ViewAction como modal.
+                return 'view';
+            })
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
