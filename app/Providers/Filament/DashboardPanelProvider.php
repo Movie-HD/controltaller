@@ -78,7 +78,9 @@ class DashboardPanelProvider extends PanelProvider
             ->breadcrumbs(false)
             ->brandName('Control Taller')
             ->plugins([
-                FilamentShieldPlugin::make(),
+                FilamentShieldPlugin::make()
+                    ->navigationGroup('Gestión')
+                    ->navigationSort(5),
             ])
             ->colors([
                 'primary' => Color::Amber,
