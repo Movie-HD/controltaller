@@ -29,9 +29,10 @@ class ClienteResource extends Resource
 {
     protected static ?string $model = Cliente::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-user-group';
+    #protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-user-group';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Gestión';
+    protected static string|\UnitEnum|null $navigationGroup = 'Clientes';
+    protected static ?string $navigationLabel = 'Clientes';
 
     public static function form(Schema $schema): Schema
     {

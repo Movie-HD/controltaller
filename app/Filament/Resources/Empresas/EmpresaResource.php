@@ -25,9 +25,11 @@ class EmpresaResource extends Resource
 {
     protected static ?string $model = Empresa::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-building-office';
+    #protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-building-office';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Gestión';
+    protected static string|\UnitEnum|null $navigationGroup = 'Gestión';
+    protected static ?string $navigationLabel = 'Empresa';
+    protected static ?int $navigationSort = 5;
 
     public static function form(Schema $schema): Schema
     {

@@ -26,9 +26,9 @@ class MecanicoResource extends Resource
 {
     protected static ?string $model = Mecanico::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-hand-raised';
+    #protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-hand-raised';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Gestión';
+    protected static string|\UnitEnum|null $navigationGroup = 'Gestión';
 
     public static function form(Schema $schema): Schema
     {
