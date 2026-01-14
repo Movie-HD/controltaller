@@ -88,10 +88,10 @@ class ReparacionesRelationManager extends RelationManager
                 Hidden::make('empresa_id')
                     ->default(fn(RelationManager $livewire) => $livewire->ownerRecord->cliente->empresa_id), // Usa la empresa del cliente relacionado
 
-                # Campo Mecánico
-                Select::make('mecanico_id')
-                    ->label('Mecánico')
-                    ->relationship('mecanico', 'nombre')
+                # Campo Mecánicos (Many-to-Many)
+                Select::make('mecanicos')
+                    ->label('Mecánicos')
+                    ->relationship('mecanicos', 'nombre')
                     # Falta definir como json para que sea multiselect.
                     ->multiple()
                     ->required()
@@ -112,8 +112,8 @@ class ReparacionesRelationManager extends RelationManager
                     ])
                     ->columnSpan(['default' => 2, 'sm' => 2]),
 
-                # Falta completar la logica de este repeater para agregar los servicios como oportunidades.
-                Repeater::make('test')
+                # Repeater para agregar los servicios como oportunidades.
+                Repeater::make('oportunidades')
                     ->table([
                         TableColumn::make('Servicio'),
                         TableColumn::make('¿Cuando?'),
@@ -127,7 +127,8 @@ class ReparacionesRelationManager extends RelationManager
                             ->required()
                     ])
                     ->columnSpan(['default' => 2, 'sm' => 2])
-                    ->hiddenLabel()
+                    #->hiddenLabel()
+                    ->label('Oportunidades')
                     ->addActionLabel('Nuevo Servicio'),
             ])
             ->columns(['default' => 2, 'sm' => 2]);
