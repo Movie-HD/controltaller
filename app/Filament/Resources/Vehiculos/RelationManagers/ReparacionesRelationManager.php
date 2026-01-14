@@ -38,7 +38,7 @@ class ReparacionesRelationManager extends RelationManager
     public function form(Schema $schema): Schema
     {
         return $schema
-        ->components([
+            ->components([
                 # Campo Descripción
                 TextArea::make('descripcion')
                     ->label('Descripcion de Reparación')
@@ -52,13 +52,13 @@ class ReparacionesRelationManager extends RelationManager
                 TextArea::make('servicios')
                     ->label('Repuestos Cambiados')
                     ->required()
-                    ->columnSpan([ 'default' => 2, 'sm' => 2 ]),
+                    ->columnSpan(['default' => 2, 'sm' => 2]),
 
                 # Campo Notas
                 TextArea::make('notas')
                     ->label('Notas Adicionales')
                     ->nullable()
-                    ->columnSpan([ 'default' => 2, 'sm' => 2 ]),
+                    ->columnSpan(['default' => 2, 'sm' => 2]),
 
                 # Campo Kilometraje
                 TextInput::make('kilometraje')
@@ -72,19 +72,21 @@ class ReparacionesRelationManager extends RelationManager
                     ->label('Precio')
                     ->numeric()
                     ->prefix('S/.')
+                    # Permiso personalizado para mostrar el precio Filament-SHIELD.
+                    ->visible(fn() => auth()->user()->can('ViewPrecioReparacion:Vehiculo'))
                     ->nullable(),
 
                 # Campo Cliente
                 Hidden::make('cliente_id')
-                    ->default(fn (RelationManager $livewire) => $livewire->ownerRecord->cliente_id), // Usa el cliente del vehículo relacionado
+                    ->default(fn(RelationManager $livewire) => $livewire->ownerRecord->cliente_id), // Usa el cliente del vehículo relacionado
 
                 # Campo Vehículo
                 Hidden::make('vehiculo_id')
-                    ->default(fn (RelationManager $livewire) => $livewire->ownerRecord->id), // Usa el ID del vehículo relacionado
+                    ->default(fn(RelationManager $livewire) => $livewire->ownerRecord->id), // Usa el ID del vehículo relacionado
 
                 # Campo Empresa
                 Hidden::make('empresa_id')
-                    ->default(fn (RelationManager $livewire) => $livewire->ownerRecord->cliente->empresa_id), // Usa la empresa del cliente relacionado
+                    ->default(fn(RelationManager $livewire) => $livewire->ownerRecord->cliente->empresa_id), // Usa la empresa del cliente relacionado
 
                 # Campo Mecánico
                 Select::make('mecanico_id')
@@ -97,25 +99,25 @@ class ReparacionesRelationManager extends RelationManager
                     ->searchable()
                     ->preload()
 
-                        # SubModal para crear un nuevo Mecánico
-                        ->createOptionForm([
-                            TextInput::make('nombre')
-                                ->label('Nombre')
-                                ->required(),
-                            Select::make('empresa_id')
-                                ->label('')
-                                ->relationship('empresa', 'nombre')
-                                ->default(1)
-                                ->extraAttributes(['style' => 'display:none;']),
-                        ])
-                    ->columnSpan([ 'default' => 2, 'sm' => 2 ]),
+                    # SubModal para crear un nuevo Mecánico
+                    ->createOptionForm([
+                        TextInput::make('nombre')
+                            ->label('Nombre')
+                            ->required(),
+                        Select::make('empresa_id')
+                            ->label('')
+                            ->relationship('empresa', 'nombre')
+                            ->default(1)
+                            ->extraAttributes(['style' => 'display:none;']),
+                    ])
+                    ->columnSpan(['default' => 2, 'sm' => 2]),
 
                 # Falta completar la logica de este repeater para agregar los servicios como oportunidades.
                 Repeater::make('test')
                     ->table([
-                            TableColumn::make('Servicio'),
-                            TableColumn::make('¿Cuando?'),
-                        ])
+                        TableColumn::make('Servicio'),
+                        TableColumn::make('¿Cuando?'),
+                    ])
                     ->compact()
                     ->schema([
                         TextInput::make('servicio')
@@ -124,11 +126,11 @@ class ReparacionesRelationManager extends RelationManager
                         DatePicker::make('fecha')
                             ->required()
                     ])
-                    ->columnSpan([ 'default' => 2, 'sm' => 2 ])
+                    ->columnSpan(['default' => 2, 'sm' => 2])
                     ->hiddenLabel()
                     ->addActionLabel('Nuevo Servicio'),
-                ])
-                ->columns([ 'default' => 2, 'sm' => 2 ]);
+            ])
+            ->columns(['default' => 2, 'sm' => 2]);
     }
 
     public function table(Table $table): Table
@@ -143,7 +145,9 @@ class ReparacionesRelationManager extends RelationManager
 
                 # Campo Precio
                 TextColumn::make('precio')
-                    ->prefix('S/. '),
+                    ->prefix('S/. ')
+                    # Permiso personalizado para mostrar el precio Filament-SHIELD.
+                    ->visible(fn() => auth()->user()->can('ViewPrecioReparacion:Vehiculo')),
 
                 # Campo Servicios
                 TextColumn::make('servicios')
@@ -159,7 +163,7 @@ class ReparacionesRelationManager extends RelationManager
             ])
             ->headerActions([
                 CreateAction::make()
-                ->slideOver(),
+                    ->slideOver(),
             ])
             ->recordActions([
                 ActionGroup::make([

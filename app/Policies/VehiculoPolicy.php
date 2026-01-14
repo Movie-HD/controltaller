@@ -11,7 +11,7 @@ use Illuminate\Auth\Access\HandlesAuthorization;
 class VehiculoPolicy
 {
     use HandlesAuthorization;
-    
+
     public function viewAny(AuthUser $authUser): bool
     {
         return $authUser->can('ViewAny:Vehiculo');
@@ -65,6 +65,12 @@ class VehiculoPolicy
     public function reorder(AuthUser $authUser): bool
     {
         return $authUser->can('Reorder:Vehiculo');
+    }
+
+    # Permiso personalizado [viewPrecioReparacion] para mostrar el precio Filament-SHIELD.
+    public function viewPrecioReparacion(AuthUser $authUser): bool
+    {
+        return $authUser->can('ViewPrecioReparacion:Vehiculo');
     }
 
 }
