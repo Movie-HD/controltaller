@@ -22,6 +22,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Navigation\NavigationGroup;
 
 use Filament\View\PanelsRenderHook; # Se agrega para el Render Hook [Panel]
 use Illuminate\Support\Facades\Blade; # Se agrego para los estilos CSS
@@ -32,12 +33,15 @@ class DashboardPanelProvider extends PanelProvider
     {
         return $panel
             ->default()
+            ->viteTheme('resources/css/filament/dashboard/theme.css')
             ->maxContentWidth('full')
             ->id('dashboard')
             ->path('dashboard')
             ->renderHook(
+                'panels::body.end',
+                fn() => view('filament.hooks.reverb-script'),
                 PanelsRenderHook::HEAD_END,
-                fn () => Blade::render('
+                fn() => Blade::render('
                 <style>
                     .fi-main-ctn{
                         & > main{
@@ -80,15 +84,26 @@ class DashboardPanelProvider extends PanelProvider
             ->plugins([
                 FilamentShieldPlugin::make()
                     ->navigationGroup('Gestión')
+                    ->navigationIcon(fn() => null)
+                    ->activeNavigationIcon(fn() => null)
                     ->navigationSort(5),
             ])
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->navigationGroups([
+                NavigationGroup::make()
+                    ->label('Clientes')
+                    ->icon('heroicon-o-user-group'),
+                NavigationGroup::make()
+                    ->label('Gestión')
+                    ->icon('heroicon-o-wrench'),
+            ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
                 Dashboard::class,
+                \App\Filament\Pages\ClientesBoard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
