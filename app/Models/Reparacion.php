@@ -18,6 +18,8 @@ class Reparacion extends Model
         'vehiculo_id',
         'empresa_id',
         'oportunidades',
+        'estado',
+        'position',
     ];
 
     protected $casts = [
@@ -70,14 +72,15 @@ class Reparacion extends Model
     }
     protected static function booted()
     {
+        // Cuando se crea una reparación
         static::created(function ($reparacion) {
-            // Aquí va el código para enviar el mensaje de WhatsApp
+            // Broadcasting para el Kanban
+            broadcast(new \App\Events\ReparacionActualizadaEvent($reparacion, 'creada'));
 
-            // Obtener el número de teléfono del cliente (esto es solo un ejemplo, puedes ajustarlo según tu base de datos)
-            $vehiculo = $reparacion->vehiculo; // Asegúrate de tener la relación correcta
-            $cliente = $vehiculo->cliente; // Suponiendo que 'vehiculo' tiene una relación con 'cliente'
-
-            $phone_number_cliente = '51' . $cliente->telefono; // Asegúrate de que 'telefono' sea el campo correcto
+            // WhatsApp logic
+            $vehiculo = $reparacion->vehiculo;
+            $cliente = $vehiculo->cliente;
+            $phone_number_cliente = '51' . $cliente->telefono;
 
             $message = "🔔 *Hola, {$cliente->nombre},*\n\n" .
                 "Queremos informarte que hemos registrado una nueva reparación para tu vehículo *{$vehiculo->marca} {$vehiculo->modelo} ({$vehiculo->anio})*.\n\n" .
@@ -88,14 +91,33 @@ class Reparacion extends Model
                 "💡 Nos aseguraremos de que tu vehículo reciba el mejor cuidado. Si necesitas más información o tienes alguna consulta, no dudes en contactarnos.\n\n" .
                 "🤝 ¡Gracias por confiar en nuestro taller!";
 
-            // Llamar a la función para enviar el mensaje
             self::enviar_mensaje_whatsapp($phone_number_cliente, $message);
+        });
 
-            Log::info('Reparación creada y mensaje enviado por WhatsApp.', [
-                'reparacion_id' => $reparacion->id,
-                'cliente' => $cliente->nombre, // Asegúrate de tener el campo 'nombre' en tu modelo cliente
-                'telefono_cliente' => $cliente->telefono
-            ]);
+        // Cuando se actualiza una reparación
+        static::updated(function (Reparacion $reparacion) {
+            // Detectar si cambió de estado (movimiento en Kanban)
+            if ($reparacion->isDirty('estado')) {
+                $estadoAnterior = $reparacion->getOriginal('estado');
+                $estadoNuevo = $reparacion->estado;
+
+                if ($estadoAnterior !== $estadoNuevo) {
+                    broadcast(new \App\Events\ReparacionMovidaEvent(
+                        $reparacion,
+                        $estadoAnterior,
+                        $estadoNuevo
+                    ));
+                }
+            }
+            // Otros cambios
+            else {
+                broadcast(new \App\Events\ReparacionActualizadaEvent($reparacion, 'actualizada'));
+            }
+        });
+
+        // Cuando se elimina una reparación
+        static::deleted(function (Reparacion $reparacion) {
+            broadcast(new \App\Events\ReparacionActualizadaEvent($reparacion, 'eliminada'));
         });
     }
 

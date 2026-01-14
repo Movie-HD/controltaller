@@ -135,34 +135,47 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // Insertar 30 clientes
+        // Insertar 40 clientes con estados distribuidos
         $clientesIds = [];
-        for ($i = 0; $i < 30; $i++) {
+        $crmEstados = ['curioso', 'primerizo', 'recurrente', 'vip', 'frio'];
+        $posicionesPorEstado = [
+            'curioso' => 0,
+            'primerizo' => 0,
+            'recurrente' => 0,
+            'vip' => 0,
+            'frio' => 0
+        ];
+
+        for ($i = 0; $i < 40; $i++) {
             $nombreCliente = $nombresPeruanos[array_rand($nombresPeruanos)] . ' ' .
                 $apellidosPeruanos[array_rand($apellidosPeruanos)] . ' ' .
                 $apellidosPeruanos[array_rand($apellidosPeruanos)];
 
             $fechaCreacion = Carbon::now()->subDays(rand(1, 365));
+            $estado = $crmEstados[array_rand($crmEstados)];
 
             $clientesIds[] = DB::table('clientes')->insertGetId([
                 'nombre' => $nombreCliente,
                 'telefono' => '9' . rand(10000000, 99999999),
+                'email' => strtolower(str_replace(' ', '.', $nombreCliente)) . '@example.com',
+                'estado' => $estado,
+                'position' => $posicionesPorEstado[$estado]++,
+                'origen' => rand(1, 10) > 3 ? 'directo' : 'curioso_convertido',
                 'empresa_id' => $empresaId,
                 'created_at' => $fechaCreacion,
                 'updated_at' => $fechaCreacion,
             ]);
         }
 
-        // Insertar 45 vehículos
+        // Insertar 50 vehículos
         $vehiculosIds = [];
         $letras = range('A', 'Z');
-        for ($i = 0; $i < 45; $i++) {
+        for ($i = 0; $i < 50; $i++) {
             $marca = array_rand($marcasModelos);
             $modelo = $marcasModelos[$marca][array_rand($marcasModelos[$marca])];
-            $kmInicial = rand(10000, 50000);
+            $kmInicial = rand(10000, 150000);
             $fechaCreacion = Carbon::now()->subDays(rand(1, 365));
 
-            // Generar placa peruana válida
             $placa = $letras[array_rand($letras)] .
                 $letras[array_rand($letras)] .
                 $letras[array_rand($letras)] .
@@ -172,7 +185,7 @@ class DatabaseSeeder extends Seeder
                 'placa' => $placa,
                 'marca' => $marca,
                 'modelo' => $modelo,
-                'anio' => rand(2015, 2023),
+                'anio' => rand(2010, 2024),
                 'color' => $colores[array_rand($colores)],
                 'km_registro' => $kmInicial,
                 'kilometraje' => $kmInicial,
@@ -182,71 +195,33 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // Generar reparaciones para cada vehículo
+        // Generar historial de reparaciones (ya entregadas)
+        $tallerEstados = ['recepcion', 'diagnostico', 'proceso', 'espera_repuestos', 'finalizado', 'entregado'];
+        $posicionesTaller = [
+            'recepcion' => 0,
+            'diagnostico' => 0,
+            'proceso' => 0,
+            'espera_repuestos' => 0,
+            'finalizado' => 0,
+            'entregado' => 0
+        ];
+
         foreach ($vehiculosIds as $vehiculoId) {
             $vehiculo = DB::table('vehiculos')->where('id', $vehiculoId)->first();
-            $kmActual = $vehiculo->km_registro;
+            $numHistorial = rand(1, 4);
 
-            // Generar entre 7 y 12 reparaciones por vehículo
-            $numReparaciones = rand(7, 12);
-
-            for ($i = 0; $i < $numReparaciones; $i++) {
+            for ($i = 0; $i < $numHistorial; $i++) {
                 $servicio = array_rand($serviciosComunes);
                 $precioRango = $serviciosComunes[$servicio];
-                $kmIncremento = rand(3000, 8000);
-                $kmActual += $kmIncremento;
-
-                // Generar fecha coherente
-                $fechaReparacion = Carbon::now()->subDays(rand(1, 365));
-
-                // Generar notas técnicas coherentes
-                $notasBase = [
-                    "Se realizó el servicio según especificaciones del fabricante.",
-                    "Cliente reportó {problema}. Se solucionó con {solucion}.",
-                    "Mantenimiento preventivo completado. Se recomienda próxima revisión a los {km} km.",
-                    "Se detectaron desgastes normales para el kilometraje.",
-                    "Trabajo realizado con repuestos originales.",
-                ];
-
-                $problemas = ["ruido en suspensión", "pérdida de potencia", "consumo excesivo de combustible", "vibración"];
-                $soluciones = ["ajuste y calibración", "reemplazo de componentes", "limpieza del sistema", "actualización de software"];
-
-                $nota = $notasBase[array_rand($notasBase)];
-                $nota = str_replace(
-                    ['{problema}', '{solucion}', '{km}'],
-                    [$problemas[array_rand($problemas)], $soluciones[array_rand($soluciones)], $kmActual + 5000],
-                    $nota
-                );
-
-                // Generar oportunidades aleatorias (50% de probabilidad)
-                $oportunidadesData = [];
-                if (rand(1, 10) <= 5) {
-                    $posiblesOportunidades = [
-                        'Cambio de llantas',
-                        'Alineamiento y balanceo',
-                        'Chequeo de frenos',
-                        'Cambio de batería',
-                        'Limpieza de inyectores',
-                        'Recarga de aire acondicionado'
-                    ];
-                    $numOps = rand(1, 2);
-                    for ($j = 0; $j < $numOps; $j++) {
-                        $oportunidadesData[] = [
-                            'servicio' => $posiblesOportunidades[array_rand($posiblesOportunidades)],
-                            'fecha' => Carbon::now()->addDays(rand(15, 90))->toDateString(),
-                        ];
-                    }
-                }
+                $fechaReparacion = Carbon::now()->subMonths(rand(1, 12));
 
                 $reparacionId = DB::table('reparacions')->insertGetId([
                     'descripcion' => $servicio,
-                    'servicios' => "Incluye: " . implode(", ", array_map(function () {
-                        return ["mano de obra", "repuestos originales", "limpieza", "diagnóstico"][rand(0, 3)];
-                    }, range(1, 3))),
-                    'kilometraje' => $kmActual,
+                    'servicios' => "Servicio preventivo realizado.",
+                    'kilometraje' => $vehiculo->kilometraje - rand(1000, 5000),
                     'precio' => rand($precioRango[0], $precioRango[1]),
-                    'notas' => $nota,
-                    'oportunidades' => !empty($oportunidadesData) ? json_encode($oportunidadesData) : null,
+                    'estado' => 'entregado',
+                    'position' => $posicionesTaller['entregado']++,
                     'cliente_id' => $vehiculo->cliente_id,
                     'vehiculo_id' => $vehiculoId,
                     'empresa_id' => $empresaId,
@@ -254,7 +229,7 @@ class DatabaseSeeder extends Seeder
                     'updated_at' => $fechaReparacion,
                 ]);
 
-                // Insertar en tabla pivot (asignar 1 o 2 mecánicos aleatorios)
+                // Asignar mecánicos
                 $mecanicosAsignados = (array) array_rand(array_flip($mecanicosIds), rand(1, 2));
                 foreach ($mecanicosAsignados as $mecanicoId) {
                     DB::table('mecanico_reparacion')->insert([
@@ -264,11 +239,66 @@ class DatabaseSeeder extends Seeder
                         'updated_at' => $fechaReparacion,
                     ]);
                 }
+            }
+        }
 
-                // Actualizar kilometraje del vehículo
-                DB::table('vehiculos')
-                    ->where('id', $vehiculoId)
-                    ->update(['kilometraje' => $kmActual]);
+        // Generar 15 reparaciones ACTIVAS distribuidas en el Kanban de Taller
+        $activeStates = ['recepcion', 'diagnostico', 'proceso', 'espera_repuestos', 'finalizado'];
+        for ($i = 0; $i < 15; $i++) {
+            $vehiculoId = $vehiculosIds[array_rand($vehiculosIds)];
+            $vehiculo = DB::table('vehiculos')->where('id', $vehiculoId)->first();
+            $estado = $activeStates[array_rand($activeStates)];
+
+            $servicio = array_rand($serviciosComunes);
+            $precioRango = $serviciosComunes[$servicio];
+            $fecha = Carbon::now()->subHours(rand(1, 72));
+
+            $reparacionId = DB::table('reparacions')->insertGetId([
+                'descripcion' => $servicio,
+                'servicios' => "Trabajo actual solicitado.",
+                'kilometraje' => $vehiculo->kilometraje,
+                'precio' => rand($precioRango[0], $precioRango[1]),
+                'estado' => $estado,
+                'position' => $posicionesTaller[$estado]++,
+                'cliente_id' => $vehiculo->cliente_id,
+                'vehiculo_id' => $vehiculoId,
+                'empresa_id' => $empresaId,
+                'created_at' => $fecha,
+                'updated_at' => $fecha,
+            ]);
+
+            $mecanicosAsignados = (array) array_rand(array_flip($mecanicosIds), rand(1, 2));
+            foreach ($mecanicosAsignados as $mecanicoId) {
+                DB::table('mecanico_reparacion')->insert([
+                    'reparacion_id' => $reparacionId,
+                    'mecanico_id' => $mecanicoId,
+                    'created_at' => $fecha,
+                    'updated_at' => $fecha,
+                ]);
+            }
+        }
+
+        // Actualizar métricas de clientes basadas en las reparaciones insertadas
+        $clientes = DB::table('clientes')->get();
+        foreach ($clientes as $cliente) {
+            $compras = DB::table('reparacions')
+                ->where('cliente_id', $cliente->id)
+                ->where('estado', 'entregado')
+                ->get();
+
+            if ($compras->count() > 0) {
+                $totalMonto = $compras->sum('precio');
+                $fechaUltima = Carbon::parse($compras->max('created_at'));
+                $diasSinComprar = now()->diffInDays($fechaUltima);
+
+                DB::table('clientes')->where('id', $cliente->id)->update([
+                    'total_compras' => $compras->count(),
+                    'ingreso_total_generado' => $totalMonto,
+                    'ticket_promedio' => $totalMonto / $compras->count(),
+                    'fecha_ultima_compra' => $fechaUltima,
+                    'dias_sin_comprar' => $diasSinComprar,
+                    'compras_ultimo_mes' => $compras->where('created_at', '>=', now()->subMonth())->count(),
+                ]);
             }
         }
 
