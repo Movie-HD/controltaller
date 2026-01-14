@@ -22,12 +22,15 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\Action;
 use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Database\Eloquent\Collection;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
 class ClientesBoard extends BoardPage
 {
+    use HasPageShield;
     protected static ?int $navigationSort = 1;
-    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-view-columns';
-    protected static ?string $navigationLabel = 'Kanban Clientes';
+    #protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-view-columns';
+    protected static string|\UnitEnum|null $navigationGroup = 'Clientes';
+    protected static ?string $navigationLabel = 'CRM';
     protected static ?string $title = 'Gestión de Clientes';
 
     public function board(Board $board): Board
