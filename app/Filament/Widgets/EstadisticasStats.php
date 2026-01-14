@@ -10,6 +10,7 @@ use Illuminate\Support\Carbon;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
+use App\Filament\Widgets\BeneficiosChart;
 
 class EstadisticasStats extends BaseWidget
 {
@@ -114,7 +115,9 @@ class EstadisticasStats extends BaseWidget
                 ->description("Total reparaciones")
                 ->descriptionIcon("heroicon-m-currency-dollar")
                 ->color("success")
-                ->chart($this->getDailyEarnings($startDate, $endDate)),
+                ->chart($this->getDailyEarnings($startDate, $endDate))
+                # Hazaña para que no se muestre si no se puede ver el grafico beneficios [Filament-SHIELD]
+                ->visible(fn() => BeneficiosChart::canView()),
         ];
     }
 
@@ -136,12 +139,12 @@ class EstadisticasStats extends BaseWidget
         ]);
 
         if ($days === 0) {
-            return [ $model::whereDate('created_at', $start)->count() ];
+            return [$model::whereDate('created_at', $start)->count()];
         }
 
         if ($days > 0) {
             return collect(range(0, $days))
-                ->map(fn ($i) => $model::whereDate('created_at', $start->copy()->addDays($i))->count())
+                ->map(fn($i) => $model::whereDate('created_at', $start->copy()->addDays($i))->count())
                 ->toArray();
         }
 
@@ -158,12 +161,12 @@ class EstadisticasStats extends BaseWidget
         $days = (int) $start->diffInDays($end);
 
         if ($days === 0) {
-            return [ Reparacion::whereDate('created_at', $start)->sum('precio') ];
+            return [Reparacion::whereDate('created_at', $start)->sum('precio')];
         }
 
         if ($days > 0) {
             return collect(range(0, $days))
-                ->map(fn ($i) => Reparacion::whereDate('created_at', $start->copy()->addDays($i))->sum('precio'))
+                ->map(fn($i) => Reparacion::whereDate('created_at', $start->copy()->addDays($i))->sum('precio'))
                 ->toArray();
         }
 

@@ -5,9 +5,11 @@ namespace App\Filament\Widgets;
 use App\Models\Reparacion;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Carbon;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 
 class BeneficiosChart extends ChartWidget
 {
+    use HasWidgetShield;
     protected ?string $heading = 'Beneficios';
     protected static ?int $sort = 3;
 
@@ -45,13 +47,13 @@ class BeneficiosChart extends ChartWidget
         }
 
         $groupBy = $this->filter === 'week' ? 'd M' : 'M Y';
-        $labels = $dates->map(fn ($date) => $date->format($groupBy))->unique();
+        $labels = $dates->map(fn($date) => $date->format($groupBy))->unique();
 
         // Datos de beneficios
         $beneficiosData = Reparacion::whereBetween('created_at', [$startDate, $endDate])
             ->get()
-            ->groupBy(fn ($item) => Carbon::parse($item->created_at)->format($groupBy))
-            ->map(fn ($group) => $group->sum('precio'));
+            ->groupBy(fn($item) => Carbon::parse($item->created_at)->format($groupBy))
+            ->map(fn($group) => $group->sum('precio'));
 
         $labels = $labels->unique()->values();
         $emptyData = array_fill_keys($labels->toArray(), 0);
